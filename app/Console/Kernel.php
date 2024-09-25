@@ -7,28 +7,28 @@ use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
-    /**
-     * The Artisan commands provided by your application.
-     *
-     * @var array
-     */
-    protected $commands = [
-        Commands\MakeModelCommand::class,
-        Commands\MakeRequestCommand::class,
-        Commands\MakeResponseCommand::class,
-        Commands\MakeControllerCommand::class,
-        Commands\MakeRepository::class,
-        Commands\KeyGenerateCommand::class,
-    ];
+  /**
+   * The Artisan commands provided by your application.
+   *
+   * @var array
+   */
+  protected $commands = [
+    Commands\MakeModelCommand::class,
+    Commands\MakeRequestCommand::class,
+    Commands\MakeResourceCommand::class,
+    Commands\MakeControllerCommand::class,
+    Commands\MakeRepository::class,
+    Commands\KeyGenerateCommand::class,
+  ];
 
-    /**
-     * Define the application's command schedule.
-     *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
-     * @return void
-     */
-    protected function schedule(Schedule $schedule)
-    {
-        //
-    }
+  /**
+   * Define the application's command schedule.
+   *
+   * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
+   * @return void
+   */
+  protected function schedule(Schedule $schedule)
+  {
+    //
+  }
 }
