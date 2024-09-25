@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         Commands\MakeResponseCommand::class,
         Commands\MakeControllerCommand::class,
         Commands\MakeRepository::class,
+        Commands\KeyGenerateCommand::class,
     ];
 
     /**
