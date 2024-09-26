@@ -13,9 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 class InstansiRepository implements InstansiRepositoryInterface
 {
   use ResponseTrait;
-  public function create(array $data): Instansi
+  public function create(array $data): ?Instansi
   {
-    return Instansi::create($data);
+    $existingInstansi = Instansi::where('nama_instansi', $data['nama_instansi'])->first();
+        
+    if ($existingInstansi) {
+          return null;
+    }
+
+        return Instansi::create($data);
   }
 
   public function get(Request $request)

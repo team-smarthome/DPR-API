@@ -24,12 +24,17 @@ class InstansiController extends Controller
         return $this->instansiRepositoryInterface->get($request);
     }
 
-    public function store(Request $request) 
+public function store(Request $request) 
     {
         $instansiRequest = new InstansiRequest();
         $data = $instansiRequest->validate($request);
         
         $instansi = $this->instansiRepositoryInterface->create($data);
+
+
+        if ($instansi === null) {
+            return $this->alreadyExist('Instansi already exists'); 
+        }
 
         return $this->created($instansi);
     }

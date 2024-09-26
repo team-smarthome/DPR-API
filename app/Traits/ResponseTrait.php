@@ -75,5 +75,12 @@ trait ResponseTrait
         ], 201);
     }
 
+    public function alreadyExist($message)
+    {
+        return response()->json([
+            'status' => 'already exists',
+            'message' => $message
+        ], 409);
+    }
 
 }
