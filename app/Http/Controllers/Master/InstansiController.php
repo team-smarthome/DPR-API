@@ -3,21 +3,34 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Models\Instansi;
+use App\Http\Requests\Master\InstansiRequest;
 use App\Repositories\Interfaces\InstansiRepositoryInterface;
 use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
 
 class InstansiController extends Controller
 {
-  protected $instansiRepositoryInterface;
+    use ResponseTrait;
 
-  public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
-  {
-    $this->instansiRepositoryInterface = $instansiRepositoryInterface;
-  }
+    protected $instansiRepositoryInterface;
 
-  public function index(Request $request)
-  {
-    return $this->instansiRepositoryInterface->get($request);
-  }
+    public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
+    {
+        $this->instansiRepositoryInterface = $instansiRepositoryInterface;
+    }
+
+    public function index(Request $request)
+    {
+        return $this->instansiRepositoryInterface->get($request);
+    }
+
+    public function store(Request $request) 
+    {
+        $instansiRequest = new InstansiRequest();
+        $data = $instansiRequest->validate($request);
+        
+        $instansi = $this->instansiRepositoryInterface->create($data);
+
+        return $this->created($instansi);
+    }
 }
