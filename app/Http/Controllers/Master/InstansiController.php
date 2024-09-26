@@ -31,6 +31,24 @@ class InstansiController extends Controller
         
         $instansi = $this->instansiRepositoryInterface->create($data);
 
+
+        if ($instansi === null) {
+            return $this->alreadyExist('Instansi already exists'); 
+        }
+
         return $this->created($instansi);
+    }
+
+    public function delete($id)
+    {
+        $instansi = $this->instansiRepositoryInterface->getById($id);
+
+        if ($instansi == false) {
+            return $this->notFound();
+        }
+
+        $this->instansiRepositoryInterface->delete($id);
+
+        return $this->deleted();
     }
 }
