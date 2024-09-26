@@ -24,7 +24,7 @@ class InstansiController extends Controller
         return $this->instansiRepositoryInterface->get($request);
     }
 
-public function store(Request $request) 
+    public function store(Request $request) 
     {
         $instansiRequest = new InstansiRequest();
         $data = $instansiRequest->validate($request);
@@ -37,5 +37,18 @@ public function store(Request $request)
         }
 
         return $this->created($instansi);
+    }
+
+    public function delete($id)
+    {
+        $instansi = $this->instansiRepositoryInterface->getById($id);
+
+        if ($instansi == false) {
+            return $this->notFound();
+        }
+
+        $this->instansiRepositoryInterface->delete($id);
+
+        return $this->deleted();
     }
 }

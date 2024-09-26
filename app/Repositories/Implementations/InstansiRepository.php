@@ -70,6 +70,10 @@ class InstansiRepository implements InstansiRepositoryInterface
   public function delete(string $id): bool
   {
     $model = Instansi::find($id);
-    return $model ? $model->delete() : false;
+    if (!$model) {
+      return false;
+    } else {
+      return $model->delete();
+    }
   }
 }
