@@ -66,4 +66,14 @@ trait ResponseTrait
         return self::pagination($collection, $message);
     }
 
+    public function created($data = [], $message = 'Successfully created Data')
+    {
+        return response()->json([
+            'status' => 'OK',
+            'message' => $message,
+            'data' => $data
+        ], 201);
+    }
+
+
 }
