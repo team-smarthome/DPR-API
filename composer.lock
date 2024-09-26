@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5306d895296f6af651b91a156b4c3a3e",
+    "content-hash": "6710a2322887d3eaaf97b25732bc5509",
     "packages": [
         {
             "name": "brick/math",
@@ -2319,16 +2319,16 @@
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.4",
+            "version": "v1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "61b87392d986dc49ad5ef64e75b1ff5fee24ef81"
+                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/61b87392d986dc49ad5ef64e75b1ff5fee24ef81",
-                "reference": "61b87392d986dc49ad5ef64e75b1ff5fee24ef81",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
+                "reference": "1dc4a3dbfa2b7628a3114e43e32120cce7cdda9c",
                 "shasum": ""
             },
             "require": {
@@ -2376,7 +2376,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2024-08-02T07:48:17+00:00"
+            "time": "2024-09-23T13:33:08+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -5007,6 +5007,54 @@
                 }
             ],
             "time": "2024-08-30T16:03:21+00:00"
+        },
+        {
+            "name": "thedevsaddam/lumen-route-list",
+            "version": "2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thedevsaddam/lumen-route-list.git",
+                "reference": "198633b7e9c23a12290dbee80f4a4d011b855207"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thedevsaddam/lumen-route-list/zipball/198633b7e9c23a12290dbee80f4a4d011b855207",
+                "reference": "198633b7e9c23a12290dbee80f4a4d011b855207",
+                "shasum": ""
+            },
+            "type": "package",
+            "autoload": {
+                "psr-4": {
+                    "Thedevsaddam\\LumenRouteList\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Saddam Hossain",
+                    "email": "thedevsaddam@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Display all the registered route list like laravel",
+            "homepage": "https://github.com/thedevsaddam/lumen-route-list",
+            "keywords": [
+                "lumen",
+                "lumen routes list",
+                "lumen-route-list",
+                "route-list",
+                "routes",
+                "thedevsaddam"
+            ],
+            "support": {
+                "issues": "https://github.com/thedevsaddam/lumen-route-list/issues",
+                "source": "https://github.com/thedevsaddam/lumen-route-list/tree/master"
+            },
+            "abandoned": true,
+            "time": "2017-09-24T05:18:44+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
