@@ -75,5 +75,37 @@ trait ResponseTrait
         ], 201);
     }
 
+    public function alreadyExist($message)
+    {
+        return response()->json([
+            'status' => 'already exists',
+            'message' => $message
+        ], 409);
+    }
+
+    public static function updated($message = 'Successfully updated Data')
+    {
+        return response()->json([
+        'status' => 'OK',
+        'message' => $message,
+        ], 200);
+    }
+
+
+    public static function deleted($message = 'Successfully deleted Data')
+    {
+        return response()->json([
+        'status' => 'OK',
+        'message' => $message
+        ], 200);
+    }
+
+    public static function notFound($message = 'Data not found')
+    {
+        return response()->json([
+        'status' => 'NO',
+        'message' => $message
+        ], 404);
+    }
 
 }

@@ -13,9 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 class InstansiRepository implements InstansiRepositoryInterface
 {
   use ResponseTrait;
-  public function create(array $data): Instansi
+  public function create(array $data): ?Instansi
   {
-    return Instansi::create($data);
+    $existingInstansi = Instansi::where('nama_instansi', $data['nama_instansi'])->first();
+        
+    if ($existingInstansi) {
+          return null;
+    }
+
+        return Instansi::create($data);
   }
 
   public function get(Request $request)
@@ -64,6 +70,10 @@ class InstansiRepository implements InstansiRepositoryInterface
   public function delete(string $id): bool
   {
     $model = Instansi::find($id);
-    return $model ? $model->delete() : false;
+    if (!$model) {
+      return false;
+    } else {
+      return $model->delete();
+    }
   }
 }
