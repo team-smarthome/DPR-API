@@ -10,45 +10,45 @@ use App\Traits\ResponseTrait;
 
 class InstansiController extends Controller
 {
-    use ResponseTrait;
+  use ResponseTrait;
 
-    protected $instansiRepositoryInterface;
+  protected $instansiRepositoryInterface;
 
-    public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
-    {
-        $this->instansiRepositoryInterface = $instansiRepositoryInterface;
+  public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
+  {
+    $this->instansiRepositoryInterface = $instansiRepositoryInterface;
+  }
+
+  public function index(Request $request)
+  {
+    return $this->instansiRepositoryInterface->get($request);
+  }
+
+  public function store(Request $request)
+  {
+    $instansiRequest = new InstansiRequest();
+    $data = $instansiRequest->validate($request);
+
+    $instansi = $this->instansiRepositoryInterface->create($data);
+
+
+    if ($instansi === null) {
+      return $this->alreadyExist('Instansi already exists');
     }
 
-    public function index(Request $request)
-    {
-        return $this->instansiRepositoryInterface->get($request);
+    return $this->created($instansi);
+  }
+
+  public function delete($id)
+  {
+    $instansi = $this->instansiRepositoryInterface->getById($id);
+
+    if ($instansi == false) {
+      return $this->notFound();
     }
 
-    public function store(Request $request) 
-    {
-        $instansiRequest = new InstansiRequest();
-        $data = $instansiRequest->validate($request);
-        
-        $instansi = $this->instansiRepositoryInterface->create($data);
+    $this->instansiRepositoryInterface->delete($id);
 
-
-        if ($instansi === null) {
-            return $this->alreadyExist('Instansi already exists'); 
-        }
-
-        return $this->created($instansi);
-    }
-
-    public function delete($id)
-    {
-        $instansi = $this->instansiRepositoryInterface->getById($id);
-
-        if ($instansi == false) {
-            return $this->notFound();
-        }
-
-        $this->instansiRepositoryInterface->delete($id);
-
-        return $this->deleted();
-    }
+    return $this->deleted();
+  }
 }
