@@ -20,32 +20,31 @@ class InstansiRepository implements InstansiRepositoryInterface
 
   public function get(Request $request)
   {
-    try {
-      $collection = Instansi::latest();
-      $keyword = str($request->query("search"));
-      $isNotPaginate = $request->query("not-paginate");
+      try {
+          $collection = Instansi::latest();
+          $keyword = $request->query("search");
+          $isNotPaginate = $request->query("not-paginate");
 
-      if ($keyword) {
-        $collection->where('nama_instansi', 'ILIKE', "%$keyword%");
+          if ($keyword) {
+              $collection->where('nama_instansi', 'ILIKE', "%$keyword%");
+          }
+
+          if ($isNotPaginate) {
+              $collection = $collection->get();
+              $result = InstansiResource::collection($collection)->response()->getData(true);
+              return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+          } else {
+              return $this->paginate($collection, null, 'Successfully get Data');
+          }
+      } catch (ValidationException $e) {
+          return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
+      } catch (ErrorException $e) {
+          return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
+      } catch (\Throwable $th) {
+          return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
       }
-
-      if ($isNotPaginate) {
-        $collection = $collection->get();
-      } else {
-        $collection = $collection
-          ->paginate($request->recordsPerPage)
-          ->appends(request()->query());
-      }
-
-      $result = InstansiResource::collection($collection)
-        ->response()
-        ->getData(true);
-
-      return $this->wrapResponse(Response::HTTP_OK, 'Data berhasil dimuat', $result);
-    } catch (\Throwable $th) {
-      return $th;
-    }
   }
+
 
   public function getById(string $id): ?Instansi
   {
