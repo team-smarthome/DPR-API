@@ -83,6 +83,14 @@ trait ResponseTrait
         ], 409);
     }
 
+    public static function updated($message = 'Successfully updated Data')
+    {
+        return response()->json([
+        'status' => 'OK',
+        'message' => $message,
+        ], 200);
+    }
+
 
     public static function deleted($message = 'Successfully deleted Data')
     {

@@ -51,4 +51,19 @@ class InstansiController extends Controller
 
     return $this->deleted();
   }
+  public function update(Request $request, $id)
+  {
+    $instansiRequest = new InstansiRequest();
+    $data = $instansiRequest->validate($request);
+
+    $instansi = $this->instansiRepositoryInterface->getById($id);
+
+    if ($instansi == false) {
+      return $this->notFound();
+    }
+
+    $this->instansiRepositoryInterface->update($id, $data);
+
+    return $this->updated();
+  }
 }
