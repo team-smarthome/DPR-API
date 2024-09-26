@@ -7,23 +7,30 @@ use Illuminate\Support\Facades\File;
 
 class MakeResourceCommand extends Command
 {
-  protected $signature = 'make:response {name}';
-  protected $description = 'Create a new response class';
+  protected $signature = 'make:resource {name} {folder?}';
+  protected $description = 'Create a new resource class';
 
   public function handle()
   {
     $name = $this->argument('name');
-    $responsePath = base_path("app/Http/Responses/{$name}Response.php");
+    $folder = $this->argument('folder') ? $this->argument('folder') : '';
+    $folderPath = $folder ? "app/Http/Resources/{$folder}" : "app/Http/Resources";
+    $resourcePath = base_path("{$folderPath}/{$name}Resource.php");
 
-    if (File::exists($responsePath)) {
-      $this->error("Response class {$name} already exists!");
+    if (!File::exists(base_path($folderPath))) {
+      File::makeDirectory(base_path($folderPath), 0755, true);
+    }
+
+    if (File::exists($resourcePath)) {
+      $this->error("Resource class {$name} already exists!");
       return;
     }
 
-    $template = "<?php\n\nnamespace App\Http\Responses;\n\nclass {$name}Response\n{\n    protected \$data;\n\n    public function __construct(\$data)\n    {\n        \$this->data = \$data;\n    }\n\n    public function toArray()\n    {\n        return [\n            'data' => \$this->data,\n            'status' => 'success',\n        ];\n    }\n}\n";
+    $namespace = $folder ? "App\Http\Resources\\" . str_replace('/', '\\', $folder) : "App\Http\Resources";
+    $template = "<?php\n\nnamespace {$namespace};\n\nuse Illuminate\Http\Resources\Json\JsonResource;\n\nclass {$name}Resource extends JsonResource\n{\n    public function toArray(\$request)\n    {\n        return [\n            // Define your resource structure here\n        ];\n    }\n}\n";
 
-    File::put($responsePath, $template);
+    File::put($resourcePath, $template);
 
-    $this->info("Response class {$name} created successfully at {$responsePath}");
+    $this->info("Resource class {$name} created successfully at {$resourcePath}");
   }
 }
