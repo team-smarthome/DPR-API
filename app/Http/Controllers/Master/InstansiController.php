@@ -7,6 +7,7 @@ use App\Http\Requests\Master\InstansiRequest;
 use App\Repositories\Interfaces\InstansiRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
+use Illuminate\Validation\ValidationException;
 
 class InstansiController extends Controller
 {
@@ -26,19 +27,26 @@ class InstansiController extends Controller
 
     public function store(Request $request) 
     {
-        $instansiRequest = new InstansiRequest();
-        $data = $instansiRequest->validate($request);
+        try {
+            $instansiRequest = new InstansiRequest();
+            $data = $instansiRequest->validate($request);
+            return $this->instansiRepositoryInterface->create($data);
+        } catch (ValidationException $e) {
+            return $this->alreadyExist('Instansi Already Exist');
+        }
         
-        return $this->instansiRepositoryInterface->create($data);
-
     }
 
     public function update(Request $request, $id)
     {
-        $instansiRequest = new InstansiRequest();
-        $data = $instansiRequest->validate($request);
-
-       return $this->instansiRepositoryInterface->update($id, $data);
+        try {
+            $instansiRequest = new InstansiRequest();
+            $data = $instansiRequest->validate($request);
+    
+            return $this->instansiRepositoryInterface->update($id, $data);
+        } catch (ValidationException $e) {
+            return $this->alreadyExist('Instansi Already Exist');
+        }
 
     }
 
@@ -46,5 +54,7 @@ class InstansiController extends Controller
     {
         return $this->instansiRepositoryInterface->delete($id);
     }
-    
+
 }
+    
+
