@@ -11,6 +11,8 @@ use App\Repositories\Interfaces\DeviceRepositoryInterface;
 use App\Repositories\Interfaces\JabatanRepositoryInterface;
 use App\Repositories\Interfaces\InstansiRepositoryInterface;
 use App\Repositories\Interfaces\DeviceTypeRepositoryInterface;
+use App\Repositories\Interfaces\AuthRepositoryInterface;
+use App\Repositories\Implementations\AuthRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(DeviceTypeRepositoryInterface::class, DeviceTypeRepository::class);
     $this->app->bind(JabatanRepositoryInterface::class, JabatanRepository::class);
     $this->app->bind(InstansiRepositoryInterface::class, InstansiRepository::class);
+    $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+    
   }
 }
