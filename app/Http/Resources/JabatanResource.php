@@ -13,6 +13,7 @@ class JabatanResource extends JsonResource
         'id' => $this->id,
         'nama_jabatan' => $this->nama_jabatan,
         'instansi_id' => $this->instansi_id,
+        'instansi' => new InstansiResource($this->whenLoaded('instansi')), 
       ];
     }
 }
