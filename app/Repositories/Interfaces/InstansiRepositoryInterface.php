@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 
 interface InstansiRepositoryInterface
 {
-   public function create(array $data);
+  public function create(array $data);
   public function get(Request $request);
   public function getById(string $id): ?Instansi;
-  public function update(Request $request, $id);
-  public function delete(string $id): bool;
+  public function update(string $id, array $data);
+  public function delete(string $id);
 }

@@ -38,28 +38,13 @@ class InstansiController extends Controller
         $instansiRequest = new InstansiRequest();
         $data = $instansiRequest->validate($request);
 
-        $instansi = $this->instansiRepositoryInterface->getById($id);
+       return $this->instansiRepositoryInterface->update($id, $data);
 
-        if ($instansi == false) {
-            return $this->notFound();
-        }
-
-        $this->instansiRepositoryInterface->update($id, $data);
-
-        return $this->updated();
     }
 
     public function delete($id)
     {
-        $instansi = $this->instansiRepositoryInterface->getById($id);
-
-        if ($instansi == false) {
-            return $this->notFound();
-        }
-
-        $this->instansiRepositoryInterface->delete($id);
-
-        return $this->deleted();
+        return $this->instansiRepositoryInterface->delete($id);
     }
     
 }
