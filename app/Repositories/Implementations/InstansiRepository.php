@@ -7,6 +7,7 @@ use App\Models\Instansi;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\InstansiRepositoryInterface;
 use App\Traits\ResponseTrait;
+use Illuminate\Support\Str;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,23 +58,37 @@ class InstansiRepository implements InstansiRepositoryInterface
     return Instansi::find($id);
   }
 
-  public function update(string $id, array $data): ?Instansi
+  public function update(string $id, array $data)
   {
-    $model = Instansi::find($id);
-    if ($model) {
-      $model->update($data);
-      return $model;
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
     }
-    return null;
-  }
 
-  public function delete(string $id): bool
-  {
     $model = Instansi::find($id);
     if (!$model) {
-      return false;
-    } else {
-      return $model->delete();
+        return $this->notFound();
+    }
+
+    $model->update($data);
+    return $this->updated();
+
+  }
+
+    public function delete(string $id)
+    {
+       if (!Str::isUuid($id)) {
+        return $this->invalidUUid();
+      }
+    
+      $model = Instansi::find($id);
+      if (!$model) {
+        return $this->notFound();
+      } else {
+        $model->delete();
+        return $this->deleted();
+      }
     }
   }
-}
+
+
+
