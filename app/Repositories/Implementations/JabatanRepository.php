@@ -27,7 +27,7 @@ class JabatanRepository implements JabatanRepositoryInterface
     public function get(Request $request)
   {
       try {
-          $collection = Jabatan::latest();
+          $collection = Jabatan::with('instansi')->latest();
           $keyword = $request->query("search");
           $isNotPaginate = $request->query("not-paginate");
 
