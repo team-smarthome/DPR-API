@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 interface InstansiRepositoryInterface
 {
-   public function create(array $data): ?Instansi;
+   public function create(array $data);
   public function get(Request $request);
   public function getById(string $id): ?Instansi;
   public function update(Request $request, $id);

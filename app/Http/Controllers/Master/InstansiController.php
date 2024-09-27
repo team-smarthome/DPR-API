@@ -10,60 +10,56 @@ use App\Traits\ResponseTrait;
 
 class InstansiController extends Controller
 {
-  use ResponseTrait;
+    use ResponseTrait;
 
-  protected $instansiRepositoryInterface;
+    protected $instansiRepositoryInterface;
 
-  public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
-  {
-    $this->instansiRepositoryInterface = $instansiRepositoryInterface;
-  }
-
-  public function index(Request $request)
-  {
-    return $this->instansiRepositoryInterface->get($request);
-  }
-
-  public function store(Request $request)
-  {
-    $instansiRequest = new InstansiRequest();
-    $data = $instansiRequest->validate($request);
-
-    $instansi = $this->instansiRepositoryInterface->create($data);
-
-
-    if ($instansi === null) {
-      return $this->alreadyExist('Instansi already exists');
+    public function __construct(InstansiRepositoryInterface $instansiRepositoryInterface)
+    {
+        $this->instansiRepositoryInterface = $instansiRepositoryInterface;
     }
 
-    return $this->created($instansi);
-  }
-
-  public function delete($id)
-  {
-    $instansi = $this->instansiRepositoryInterface->getById($id);
-
-    if ($instansi == false) {
-      return $this->notFound();
+    public function index(Request $request)
+    {
+        return $this->instansiRepositoryInterface->get($request);
     }
 
-    $this->instansiRepositoryInterface->delete($id);
+    public function store(Request $request) 
+    {
+        $instansiRequest = new InstansiRequest();
+        $data = $instansiRequest->validate($request);
+        
+        return $this->instansiRepositoryInterface->create($data);
 
-    return $this->deleted();
-  }
-  public function update(Request $request, $id)
-  {
-    $instansiRequest = new InstansiRequest();
-    $data = $instansiRequest->validate($request);
-
-    $instansi = $this->instansiRepositoryInterface->getById($id);
-
-    if ($instansi == false) {
-      return $this->notFound();
     }
 
-    $this->instansiRepositoryInterface->update($id, $data);
+    public function update(Request $request, $id)
+    {
+        $instansiRequest = new InstansiRequest();
+        $data = $instansiRequest->validate($request);
 
-    return $this->updated();
-  }
+        $instansi = $this->instansiRepositoryInterface->getById($id);
+
+        if ($instansi == false) {
+            return $this->notFound();
+        }
+
+        $this->instansiRepositoryInterface->update($id, $data);
+
+        return $this->updated();
+    }
+
+    public function delete($id)
+    {
+        $instansi = $this->instansiRepositoryInterface->getById($id);
+
+        if ($instansi == false) {
+            return $this->notFound();
+        }
+
+        $this->instansiRepositoryInterface->delete($id);
+
+        return $this->deleted();
+    }
+    
 }
