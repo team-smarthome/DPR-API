@@ -29,14 +29,8 @@ class InstansiController extends Controller
         $instansiRequest = new InstansiRequest();
         $data = $instansiRequest->validate($request);
         
-        $instansi = $this->instansiRepositoryInterface->create($data);
+        return $this->instansiRepositoryInterface->create($data);
 
-
-        if ($instansi === null) {
-            return $this->alreadyExist('Instansi already exists'); 
-        }
-
-        return $this->created($instansi);
     }
 
     public function update(Request $request, $id)

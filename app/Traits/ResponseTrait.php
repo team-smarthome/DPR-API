@@ -47,7 +47,7 @@ trait ResponseTrait
         ];
 
         return response()->json([
-            'status' => 'OK',
+            'status' => 201,
             'message' => $message,
             'records' => $collection->items(),
             'pagination' => $paginationData,
@@ -69,7 +69,7 @@ trait ResponseTrait
     public function created($data = [], $message = 'Successfully created Data')
     {
         return response()->json([
-            'status' => 'OK',
+            'status' => 201,
             'message' => $message,
             'data' => $data
         ], 201);
@@ -78,7 +78,7 @@ trait ResponseTrait
     public function alreadyExist($message)
     {
         return response()->json([
-            'status' => 'already exists',
+            'status' =>  409,
             'message' => $message
         ], 409);
     }
@@ -86,7 +86,7 @@ trait ResponseTrait
     public static function updated($message = 'Successfully updated Data')
     {
         return response()->json([
-        'status' => 'OK',
+        'status' => 200,
         'message' => $message,
         ], 200);
     }
@@ -95,7 +95,7 @@ trait ResponseTrait
     public static function deleted($message = 'Successfully deleted Data')
     {
         return response()->json([
-        'status' => 'OK',
+        'status' => 200,
         'message' => $message
         ], 200);
     }
@@ -103,7 +103,7 @@ trait ResponseTrait
     public static function notFound($message = 'Data not found')
     {
         return response()->json([
-        'status' => 'NO',
+        'status' => 404,
         'message' => $message
         ], 404);
     }
