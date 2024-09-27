@@ -39,9 +39,9 @@ class JabatanController extends Controller
     $jabatanRequest = new JabatanRequest();
     $data = $jabatanRequest->validate($request);
 
-    $instansi = $this->jabatanRepositoryInterface->getById($id);
+    $jabatan = $this->jabatanRepositoryInterface->getById($id);
 
-    if ($instansi == false) {
+    if ($jabatan == false) {
       return $this->notFound();
     }
 
