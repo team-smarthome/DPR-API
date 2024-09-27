@@ -18,8 +18,8 @@ class UsersSeeder extends Seeder
     {
         $users = [
             [
-                'id' => "0192325a-dda0-72a1-ada6-93b4d2d6aef2",
-                'pegawai_id' => "0192325a-6388-72aa-8c7d-1a819a701f2f",
+                'id' => "019232b5-0219-76c1-bb95-3c4988c0e496",
+                'pegawai_id' => "01923257-3926-7988-9803-024088676703",
                 'username' => 'dandan',
                 'password' => Hash::make('dandan1234'),
                 'role_id' => "0192325a-6388-72aa-8c7d-1a819a701f2f",
@@ -29,5 +29,6 @@ class UsersSeeder extends Seeder
                 'updated_at' => Carbon::now()
             ]
         ];
+        DB::table('users')->insert($users);
     }
 }
