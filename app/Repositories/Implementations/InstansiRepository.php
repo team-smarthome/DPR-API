@@ -7,6 +7,7 @@ use App\Models\Instansi;
 use Illuminate\Http\Request;
 use App\Repositories\Interfaces\InstansiRepositoryInterface;
 use App\Traits\ResponseTrait;
+use Illuminate\Support\Str;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -57,31 +58,36 @@ class InstansiRepository implements InstansiRepositoryInterface
     return Instansi::find($id);
   }
 
-  public function update(Request $request, $id)
+  public function update(string $id, array $data)
   {
-    try {
-      $resource = Instansi::findOrFail($id);
-      $validatedData = $request->validated();
-
-      if ($resource->update($validatedData)) {
-        $resource = (new InstansiResource($resource))
-          ->response()
-          ->getData(true);
-
-        return $this->wrapResponse(Response::HTTP_OK, 'Data berhasil diperbarui', $resource);
-      }
-    } catch (\Throwable $th) {
-      return $th;
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
     }
-  }
 
-  public function delete(string $id): bool
-  {
     $model = Instansi::find($id);
     if (!$model) {
-      return false;
-    } else {
-      return $model->delete();
+        return $this->notFound();
     }
+
+    $model->update($data);
+    return $this->updated();
   }
+
+    public function delete(string $id)
+    {
+       if (!Str::isUuid($id)) {
+        return $this->invalidUUid();
+      }
+    
+      $model = Instansi::find($id);
+      if (!$model) {
+        return $this->notFound();
+      } else {
+        $model->delete();
+        return $this->deleted();
+      }
+    }
 }
+
+
+

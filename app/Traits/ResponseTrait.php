@@ -108,4 +108,12 @@ trait ResponseTrait
         ], 404);
     }
 
+    public static function invalidUUid($message = 'Invalid UUID format')
+    {
+        return response()->json([
+        'status' => 400,
+        'message' => $message
+        ], 400);
+    }
+
 }
