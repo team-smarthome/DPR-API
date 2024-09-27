@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Interfaces\InstansiRepositoryInterface;
+use App\Repositories\Implementations\JabatanRepository;
 use App\Repositories\Implementations\InstansiRepository;
+use App\Repositories\Interfaces\JabatanRepositoryInterface;
+use App\Repositories\Interfaces\InstansiRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
    */
   public function register()
   {
+    $this->app->bind(JabatanRepositoryInterface::class, JabatanRepository::class);
     $this->app->bind(InstansiRepositoryInterface::class, InstansiRepository::class);
   }
 }
