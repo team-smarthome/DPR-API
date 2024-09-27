@@ -10,7 +10,15 @@ class JabatanRequest
     public function validate(Request $request)
     {
         $rules = [
-            'nama_jabatan' => 'required|string|max:255',
+            'nama_jabatan' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::unique('jabatan', 'nama_jabatan')->where(function ($query) {
+                    return $query->whereRaw('LOWER(nama_jabatan) = LOWER(?)', [request('nama_jabatan')]);
+                }),
+                'regex:/^[a-zA-Z\s]*$/'
+            ],
             'instansi_id' => 'required|string|max:255',
         ];
 
