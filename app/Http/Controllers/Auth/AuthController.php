@@ -51,7 +51,7 @@ class AuthController extends Controller
     private function generateJwt($user)
     {
         $payload = [
-            'sub' => $user->id,
+            'user_id' => $user->id,
             'iat' => time(),
             'exp' => time() + 60 * 60,
             'role_id' => $user->role_id,
