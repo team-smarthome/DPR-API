@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class User extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasUuids;
 
     protected $table = 'users';
 
@@ -22,11 +24,21 @@ class User extends Model
     ];
 
     public $incrementing = false;
-
-    protected $keyType = 'string';
+    public $timestamps = true;
+    protected $keyType = 'uuid';
 
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
+
+    public function userLogin()
+    {
+        return $this->hasMany(UserLogin::class, 'user_id', 'id');
+    }
+
+    public function userLog()
+    {
+        return $this->hasMany(UserLog::class, 'user_id', 'id');
     }
 }

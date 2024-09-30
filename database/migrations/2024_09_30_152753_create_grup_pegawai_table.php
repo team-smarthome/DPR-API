@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_login', function (Blueprint $table) {
+        Schema::create('grup_pegawai', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id')->nullable(false);
-            $table->text('token')->nullable(false);
-            $table->date('token_expired')->nullable(true);
+            $table->string('ketua_grup', 100)->nullable(false);
+            $table->string('nama_grup_pegawai', 100)->nullable(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_login');
+        Schema::dropIfExists('grup_pegawai');
     }
 };

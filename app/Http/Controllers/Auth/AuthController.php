@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+use App\Models\UserLogin;
+use Illuminate\Support\Carbon;
+use App\Models\UserLog;
+
 
 class AuthController extends Controller
 {
@@ -36,6 +41,22 @@ class AuthController extends Controller
 
             $token = $this->generateJwt($user);
 
+             DB::transaction(function () use ($user) {
+                $token = $this->generateJwt($user);
+
+                UserLogin::create([
+                    'user_id' => $user->id,
+                    'token' => $token,
+                    'token_expired' => Carbon::now()->addHour(),
+                ]);
+
+                UserLog::create([
+                    'id' => \Illuminate\Support\Str::uuid(),
+                    'user_id' => $user->id,
+                    'nama_user_log' => 'Login',
+                ]);
+            });
+
             return response()->json([
                 'status' => 200,
                 'token' => $token
@@ -45,6 +66,11 @@ class AuthController extends Controller
                 'status' => 422,
                 'message' => $e->getMessage()
             ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 500,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
