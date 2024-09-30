@@ -72,14 +72,14 @@ $app->configure('app');
 |
 */
 
-$app->middleware([
-    App\Http\Middleware\ExampleMiddleware::class
-]);
-
-// $app->routeMiddleware([
-//     'auth' => App\Http\Middleware\Authenticate::class,
-//     'session' => Illuminate\Session\Middleware\StartSession::class,
+// $app->middleware([
+//     App\Http\Middleware\ExampleMiddleware::class
 // ]);
+
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+    'session' => Illuminate\Session\Middleware\StartSession::class,
+]);
 
 
 
@@ -97,6 +97,7 @@ $app->middleware([
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
+$app->register(\Thedevsaddam\LumenRouteList\LumenRouteListServiceProvider::class);
 
 
 /*

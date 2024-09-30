@@ -15,7 +15,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->jwtSecret = env('JWT_SECRET', 'your_default_secret');
+        $this->jwtSecret = env('JWT_SECRET', 'testing1234');
     }
 
     public function login(Request $request)
@@ -24,15 +24,26 @@ class AuthController extends Controller
         
         $validatedData = $loginRequest->validate($request);
 
-        $user = User::where('username', $validatedData['username'])->first();
+        $user = User::with('role')->where('username', $validatedData['username'])->first();
 
         if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(
+                [
+                    'status' => 401,
+                    'message' => 'Unauthorized'
+                ],
+                401
+            );
         }
 
         $token = $this->generateJwt($user);
-        return response()->json(compact('token'));
+
+        return response()->json([
+            'status' => 200,
+            'token' => $token
+        ], 200);
     }
+
 
     /**
      * Generate JWT Token
@@ -40,9 +51,11 @@ class AuthController extends Controller
     private function generateJwt($user)
     {
         $payload = [
-            'sub' => $user->id, 
+            'sub' => $user->id,
             'iat' => time(),
-            'exp' => time() + 60 * 60, 
+            'exp' => time() + 60 * 60,
+            'role_id' => $user->role_id,
+            'nama_role' => $user->role->nama_role,
         ];
 
         return JWT::encode($payload, $this->jwtSecret, 'HS256');

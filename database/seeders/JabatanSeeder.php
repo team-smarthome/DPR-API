@@ -18,7 +18,7 @@ class JabatanSeeder extends Seeder
             [
                 'id' => "01923250-d032-7c64-aee4-44593f3d145c",
                 'nama_jabatan' => 'Kelurahan',
-                'instansi_id' => '0192324f-96dc-72dc-b294-9b10b2173332',
+                'instansi_id' => '0192324f-96dc-72dc-b294-9b10b2123302',
                 'created_at' => Carbon::now(), 
                 'updated_at' => Carbon::now()
             ],
