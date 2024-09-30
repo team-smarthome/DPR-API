@@ -39,6 +39,14 @@ class AuthController extends Controller
                 ], 401);
             }
 
+
+            if ($user->is_suspend == 1) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized. User is suspended.'
+                ], 401);
+            }
+
             $token = $this->generateJwt($user);
 
              DB::transaction(function () use ($user) {

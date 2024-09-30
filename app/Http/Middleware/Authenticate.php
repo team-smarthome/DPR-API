@@ -7,7 +7,7 @@ use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\ExpiredException;
-use App\Models\UserLogin; // Pastikan untuk mengimpor model UserLogin
+use App\Models\UserLogin;
 
 class Authenticate
 {
@@ -19,7 +19,7 @@ class Authenticate
      * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next, $role = null)
     {
         $token = $request->bearerToken();
 
@@ -44,6 +44,18 @@ class Authenticate
                 ], 401);
             }
 
+            if ($role === 'admin' && !in_array($credentials->nama_role, ['admin', 'super-admin'])) {
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'Forbidden. Access restricted to admins.'
+                ], 403);
+            } elseif ($role === 'super-admin' && $credentials->nama_role !== 'super-admin') {
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'Forbidden. Access restricted to super admins only.'
+                ], 403);
+            }
+
         } catch (ExpiredException $e) {
             return response()->json([
                 'status' => 401,
@@ -52,10 +64,10 @@ class Authenticate
         } catch (Exception $e) {
             return response()->json([
                 'status' => 401,
-                'message' => 'Unauthorized. Invalid token.'
+                'message' => 'Unauthorized. Invalid token.',
+                'role' => $role
             ], 401);
         }
-
         return $next($request);
     }
 }

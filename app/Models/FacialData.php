@@ -7,17 +7,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class UserLog extends Model
+class FacialData extends Model
 {
-
     use SoftDeletes, HasUuids;
-    
-    protected $table = 'user_log';
+
+    protected $table = 'facial_data';
 
     protected $fillable = [
         'id',
-        'user_id',
-        'nama_user_log',
+        'face_template',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -27,8 +25,8 @@ class UserLog extends Model
     protected $keyType = 'uuid';
     public $timestamps = true;
 
-    public function user()
+    public function pegawai()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(Pegawai::class, 'face_id', 'id');
     }
 }
