@@ -19,6 +19,8 @@ use App\Repositories\Interfaces\LokasiRepositoryInterface;
 use App\Repositories\Interfaces\ZonaRepositoryInterface;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Implementations\AuthRepository;
+use App\Repositories\Implementations\GrupPegawaiRepository;
+use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,5 +41,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(ZonaRepositoryInterface::class, ZonaRepository::class);
     $this->app->bind(LokasiRepositoryInterface::class, LokasiRepository::class);
     $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+    $this->app->bind(GrupPegawaiRepositoryInterface::class, GrupPegawaiRepository::class);
   }
 }
