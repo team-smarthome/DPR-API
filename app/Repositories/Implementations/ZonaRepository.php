@@ -2,45 +2,44 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\InstansiResource;
-use App\Models\Instansi;
-use Illuminate\Http\Request;
-use App\Repositories\Interfaces\InstansiRepositoryInterface;
+use App\Http\Resources\ZonaResource;
+use App\Models\Zona;
+use App\Repositories\Interfaces\ZonaRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-use Symfony\Component\HttpFoundation\Response;
-
-class InstansiRepository implements InstansiRepositoryInterface
+class ZonaRepository implements ZonaRepositoryInterface
 {
   use ResponseTrait;
   public function create(array $data)
   {
-    $existingInstansi = Instansi::where('nama_instansi', $data['nama_instansi'])->first();
+    $existingZona = Zona::where('nama_zona', $data['nama_zona'])->first();
 
-    if ($existingInstansi) {
-      return $this->alreadyExist('Instansi Already Exist');
+    if ($existingZona) {
+      return $this->alreadyExist('Zona Already Exist');
     }
 
-    return $this->created(Instansi::create($data));
+    return $this->created(Zona::create($data));
   }
 
   public function get(Request $request)
   {
     try {
-      $collection = Instansi::latest();
+      $collection = Zona::latest();
       $keyword = $request->query("search");
       $isNotPaginate = $request->query("not-paginate");
 
       if ($keyword) {
-        $collection->where('nama_instansi', 'ILIKE', "%$keyword%");
+        $collection->where('nama_zona', 'ILIKE', "%$keyword%");
       }
 
       if ($isNotPaginate) {
         $collection = $collection->get();
-        $result = InstansiResource::collection($collection)->response()->getData(true);
+        $result = ZonaResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
         return $this->paginate($collection, null, 'Successfully get Data');
@@ -54,10 +53,9 @@ class InstansiRepository implements InstansiRepositoryInterface
     }
   }
 
-
-  public function getById(string $id): ?Instansi
+  public function getById(string $id): ?Zona
   {
-    return Instansi::find($id);
+    return Zona::find($id);
   }
 
   public function update(string $id, array $data)
@@ -66,7 +64,7 @@ class InstansiRepository implements InstansiRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Instansi::find($id);
+    $model = Zona::find($id);
     if (!$model) {
       return $this->notFound();
     }
@@ -81,7 +79,7 @@ class InstansiRepository implements InstansiRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Instansi::find($id);
+    $model = Zona::find($id);
     if (!$model) {
       return $this->notFound();
     } else {

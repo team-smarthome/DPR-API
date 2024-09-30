@@ -14,6 +14,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call('UsersTableSeeder');
+        $this->call([
+            IntansiSeeder::class,
+            JabatanSeeder::class,
+            PalmDataSeeder::class,
+            FacialDataSeeder::class,
+            PegawaiSeeder::class,
+            RoleSeeder::class,
+            UsersSeeder::class,
+            PengunjungSeeder::class,
+            LokasiSeeder::class,
+            ZonaSeeder::class,
+            DeviceTypeSeeder::class,
+            DeviceSeeder::class,
+        ]);
     }
 }
