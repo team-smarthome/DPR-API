@@ -2,35 +2,61 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\LokasiRequest;
 use App\Models\Lokasi;
+use App\Repositories\Interfaces\LokasiRepositoryInterface;
+use App\Traits\ResponseTrait;
+use Dotenv\Exception\ValidationException;
 use Illuminate\Http\Request;
 
 class LokasiController extends Controller
 {
-    public function index()
-    {
-        return Lokasi::all();
-    }
+  use ResponseTrait;
 
-    public function show($id)
-    {
-        return Lokasi::find($id);
-    }
+  protected $lokasiRepositoryInterface;
 
-    public function store(Request $request)
-    {
-        return Lokasi::create($request->all());
-    }
+  public function __construct(LokasiRepositoryInterface $lokasiRepositoryInterface)
+  {
+    $this->lokasiRepositoryInterface = $lokasiRepositoryInterface;
+  }
 
-    public function update(Request $request, $id)
-    {
-        $model = Lokasi::find($id);
-        $model->update($request->all());
-        return $model;
-    }
+  public function index(Request $request)
+  {
+    return $this->lokasiRepositoryInterface->get($request);
+  }
 
-    public function destroy($id)
-    {
-        return Lokasi::destroy($id);
+  public function show($id)
+  {
+    return Lokasi::find($id);
+  }
+
+  public function store(Request $request)
+  {
+    try {
+      $lokasiRequest = new LokasiRequest();
+      $data = $lokasiRequest->validate($request);
+      return $this->lokasiRepositoryInterface->create($data);
+    } catch (ValidationException $e) {
+      return $this->alreadyExist('Zona Already Exist');
     }
+  }
+
+
+  public function update(Request $request, $id)
+  {
+    try {
+      $lokasiRequest = new LokasiRequest();
+      $data = $lokasiRequest->validate($request);
+
+      return $this->lokasiRepositoryInterface->update($id, $data);
+    } catch (ValidationException $e) {
+      return $this->alreadyExist('Zona Already Exist');
+    }
+  }
+
+  public function delete($id)
+  {
+    return $this->lokasiRepositoryInterface->delete($id);
+  }
 }

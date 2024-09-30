@@ -37,8 +37,18 @@ class Zona extends Model
     return $this->hasMany(Zona::class, 'parent_id');
   }
 
+  public function DeviceZone(): HasMany
+  {
+    return $this->hasMany(DeviceZone::class, 'zona_id', 'id');
+  }
+
   // public function devices()
   // {
   //     return $this->hasMany(Device::class, 'zona_id', 'zona_id');
   // }
+
+  public function lokasi()
+  {
+    return $this->belongsTo(Lokasi::class, 'lokasi_id', 'id');
+  }
 }
