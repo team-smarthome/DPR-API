@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('grup_pegawai', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('ketua_grup', 100)->nullable(false);
+            $table->string('ketua_grup', 36)->nullable(false);
             $table->string('nama_grup_pegawai', 100)->nullable(false);
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('ketua_grup')->references('id')->on('pegawai');
         });
+
+
     }
 
     /**
