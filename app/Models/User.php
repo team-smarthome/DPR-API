@@ -24,4 +24,9 @@ class User extends Model
     public $incrementing = false;
 
     protected $keyType = 'string';
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
+    }
 }
