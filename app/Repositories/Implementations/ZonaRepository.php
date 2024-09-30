@@ -29,7 +29,7 @@ class ZonaRepository implements ZonaRepositoryInterface
   public function get(Request $request)
   {
     try {
-      $collection = Zona::latest();
+      $collection = Zona::with('lokasi')->latest(); // Memuat relasi lokasi
       $keyword = $request->query("search");
       $isNotPaginate = $request->query("not-paginate");
 
@@ -52,6 +52,7 @@ class ZonaRepository implements ZonaRepositoryInterface
       return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
     }
   }
+
 
   public function getById(string $id): ?Zona
   {
