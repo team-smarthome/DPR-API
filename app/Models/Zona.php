@@ -46,4 +46,9 @@ class Zona extends Model
   // {
   //     return $this->hasMany(Device::class, 'zona_id', 'zona_id');
   // }
+
+  public function lokasi()
+  {
+    return $this->belongsTo(Lokasi::class, 'lokasi_id', 'id');
+  }
 }
