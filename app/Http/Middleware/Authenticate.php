@@ -68,7 +68,6 @@ class Authenticate
             return response()->json([
                 'status' => 401,
                 'message' => 'Unauthorized. Invalid token.',
-                'role' => $role
             ], 401);
         }
     }
