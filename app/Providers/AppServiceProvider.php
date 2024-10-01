@@ -21,6 +21,8 @@ use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Implementations\AuthRepository;
 use App\Repositories\Implementations\GrupPegawaiRepository;
 use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
+use App\Repositories\Implementations\PegawaiRepository;
+use App\Repositories\Interfaces\PegawaiRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,8 +32,6 @@ class AppServiceProvider extends ServiceProvider
    * @return void
    */
   public function register()
-
-
   {
     $this->app->bind(DeviceZoneRepositoryInterface::class, DeviceZoneRepository::class);
     $this->app->bind(DeviceRepositoryInterface::class, DeviceRepository::class);
@@ -42,5 +42,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(LokasiRepositoryInterface::class, LokasiRepository::class);
     $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     $this->app->bind(GrupPegawaiRepositoryInterface::class, GrupPegawaiRepository::class);
+    $this->app->bind(PegawaiRepositoryInterface::class, PegawaiRepository::class);
   }
 }

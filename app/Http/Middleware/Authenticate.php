@@ -32,6 +32,8 @@ class Authenticate
 
         try {
             $credentials = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+            
+            $request->merge(['user_id' => $credentials->pegawai_id]);
 
             $userLogin = UserLogin::where('user_id', $credentials->sub)
                 ->orderBy('created_at', 'desc')
@@ -54,8 +56,9 @@ class Authenticate
                     'status' => 403,
                     'message' => 'Forbidden. Access restricted to super admins only.'
                 ], 403);
-            }
+            } 
 
+            return $next($request);
         } catch (ExpiredException $e) {
             return response()->json([
                 'status' => 401,
@@ -68,6 +71,5 @@ class Authenticate
                 'role' => $role
             ], 401);
         }
-        return $next($request);
     }
 }
