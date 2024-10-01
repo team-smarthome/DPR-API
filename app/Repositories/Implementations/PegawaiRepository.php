@@ -42,7 +42,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
                 $result = PegawaiResource::collection($collection)->response()->getData(true);
                 return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             } else {
-                return $this->paginate($collection, 'Successfully get Data', PegawaiResource::class);
+                return $this->paginate2($collection, 'Successfully get Data', PegawaiResource::class);
             }
         } catch (ValidationException $e) {
             return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());

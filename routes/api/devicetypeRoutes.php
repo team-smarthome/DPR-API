@@ -5,7 +5,7 @@ use App\Http\Controllers\Master\DeviceTypeController;
 //         $router->get('/device-type', 'Master\DeviceTypeController@index');
 // });
 
-$router->group(['middleware' => 'auth:super-admin'], function () use ($router) {
+$router->group(['middleware' => 'auth:admin'], function () use ($router) {
     $router->get('/device-type', 'Master\DeviceTypeController@index');
 });
 
