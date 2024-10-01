@@ -54,19 +54,19 @@ trait ResponseTrait
         ], 200);
     }
 
-    // public static function paginate($query, $max_data = null, $message = 'Successfully get Data', $perPage = null)
-    // {
-    //     $perPage = request()->input('perPage', $perPage ?? self::$defaultPagination);
+    public static function paginate($query, $max_data = null, $message = 'Successfully get Data', $perPage = null)
+    {
+        $perPage = request()->input('perPage', $perPage ?? self::$defaultPagination);
         
-    //     if (!is_numeric($perPage) || (int)$perPage <= 0) {
-    //         $perPage = self::$defaultPagination;
-    //     }
+        if (!is_numeric($perPage) || (int)$perPage <= 0) {
+            $perPage = self::$defaultPagination;
+        }
 
-    //     $collection = $query->paginate($perPage);
-    //     return self::pagination($collection, $message);
-    // }
+        $collection = $query->paginate($perPage);
+        return self::pagination($collection, $message);
+    }
 
-    public static function paginate($query, $message = 'Successfully get Data', $resourceClass = null)
+    public static function paginate2($query, $message = 'Successfully get Data', $resourceClass = null)
     {
         $perPage = request()->input('perPage', self::$defaultPagination);
         
