@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GrupPegawai extends Model
 {
+
+    use SoftDeletes, HasUuids;
     protected $table = 'grup_pegawai';
 
     protected $fillable = [
