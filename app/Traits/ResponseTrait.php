@@ -47,7 +47,7 @@ trait ResponseTrait
         ];
 
         return response()->json([
-            'status' => 201,
+            'status' => 200,
             'message' => $message,
             'records' => $collection->items(),
             'pagination' => $paginationData,
