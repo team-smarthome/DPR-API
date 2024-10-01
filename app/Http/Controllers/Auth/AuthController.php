@@ -89,6 +89,7 @@ class AuthController extends Controller
     {
         $payload = [
             'sub' => $user->id,
+            'pegawai_id' => $user->pegawai_id,
             'iat' => time(),
             'exp' => time() + 60 * 60,
             'role_id' => $user->role_id,

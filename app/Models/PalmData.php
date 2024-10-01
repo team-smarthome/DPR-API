@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class PalmData extends Model
 {
@@ -27,6 +26,7 @@ class PalmData extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'palm_data_id', 'id');
+        return $this->hasOne(Pegawai::class, 'palm_data_id', 'id');
     }
 }
+
