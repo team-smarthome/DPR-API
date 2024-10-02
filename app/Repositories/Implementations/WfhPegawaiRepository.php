@@ -38,6 +38,7 @@ class WfhPegawaiRepository implements WfhPegawaiRepositoryInterface
                 $collection->where('nama_pegawai', 'ILIKE', "%$keyword%");
             }
 
+
             if ($isNotPaginate) {
                 $collection = $collection->get();
                 $result = WfhPegawaiResource::collection($collection)->response()->getData(true);

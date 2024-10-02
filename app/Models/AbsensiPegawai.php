@@ -7,19 +7,18 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WfhPegawai extends Model
+class AbsensiPegawai extends Model
 {
 
     use SoftDeletes, HasUuids;
-    protected $table = 'wfh_pegawai';
+    protected $table = 'absensi_pegawai';
 
     protected $fillable = [
         'id',
         'pegawai_id',
-        'nama_wfh_pegawai',
-        'waktu_mulai',
-        'waktu_selesai',
-        'jumlah_hari',
+        'nama_absensi_pegawai',
+        'is_wfh',
+        'image_url',
         'created_at',
         'updated_at',
         'deleted_at',

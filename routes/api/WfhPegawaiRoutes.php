@@ -11,7 +11,7 @@ $router->group(['prefix' => 'master'], function () use ($router) {
     $router->group(['middleware' => 'auth:admin'], function () use ($router) {
         $router->post('/wfh-pegawai', 'Master\WfhPegawaiController@store');
         $router->put('/wfh-pegawai/{id}', 'Master\WfhPegawaiController@update');
-        $router->delete('/wfh-pegawai/{id}', 'Master\WfhPeagawaiController@destroy');
+        $router->delete('/wfh-pegawai/{id}', 'Master\WfhPegawaiController@destroy');
     });
 });
 

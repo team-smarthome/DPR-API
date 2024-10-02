@@ -15,7 +15,7 @@ class WfhPegawaiRequest
 
     $rules = [
         'pegawai_id' => 'string|max:36',
-        'nama_wfh_pegawai' => 'string|max:100',
+        'nama_wfh_pegawai' => '',
         'waktu_mulai' => 'date',
         'waktu_selesai' => 'date',
         'jumlah_hari' => 'integer',
