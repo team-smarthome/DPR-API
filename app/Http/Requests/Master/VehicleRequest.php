@@ -13,12 +13,11 @@ class VehicleRequest
   {
 
     $rules = [
-        'nip' => 'string|max:100',
-        'pegawai_id' => 'string|max:36',
-        'pengunjung_id' => 'string|max:36',
+        'pegawai_id' => '',
+        'pengunjung_id' => '',
         'plat_nomor' => 'string|max:100',
-        'image_url' => 'integer',
-        'grup_vehicle_pegawai_id' => 'string|max:36',
+        'image_url' => 'string',
+        'grup_vehicle_pegawai_id' => '',
     ];
 
     $validator = \Validator::make($request->all(), $rules);
