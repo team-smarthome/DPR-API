@@ -63,4 +63,9 @@ class Pegawai extends Model
     {
         return $this->hasMany(AbsensiPegawai::class, 'pegawai_id', 'id');
     }
+
+    public function vehicle()
+    {
+        return $this->hasMany(Vehicle::class, 'pegawai_id', 'id');
+    }
 }
