@@ -23,6 +23,8 @@ use App\Repositories\Implementations\GrupPegawaiRepository;
 use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
 use App\Repositories\Implementations\PegawaiRepository;
 use App\Repositories\Interfaces\PegawaiRepositoryInterface;
+use App\Repositories\Implementations\WfhPegawaiRepository;
+use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,5 +45,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     $this->app->bind(GrupPegawaiRepositoryInterface::class, GrupPegawaiRepository::class);
     $this->app->bind(PegawaiRepositoryInterface::class, PegawaiRepository::class);
+    $this->app->bind(WfhPegawaiRepositoryInterface::class, WfhPegawaiRepository::class);
   }
 }

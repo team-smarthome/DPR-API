@@ -53,4 +53,9 @@ class Pegawai extends Model
     {
         return $this->belongsTo(GrupPegawai::class, 'grup_pegawai_id', 'id');
     }
+
+    public function wfhPegawai()
+    {
+        return $this->hasMany(WfhPegawai::class, 'pegawai_id', 'id');
+    }
 }
