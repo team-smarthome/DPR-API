@@ -20,10 +20,14 @@ use App\Repositories\Interfaces\ZonaRepositoryInterface;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use App\Repositories\Implementations\AuthRepository;
 use App\Repositories\Implementations\GrupPegawaiRepository;
+use App\Repositories\Implementations\KunjunganRepository;
 use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
 use App\Repositories\Implementations\PegawaiRepository;
+use App\Repositories\Implementations\PengunjungRepository;
 use App\Repositories\Interfaces\PegawaiRepositoryInterface;
 use App\Repositories\Implementations\WfhPegawaiRepository;
+use App\Repositories\Interfaces\KunjunganRepositoryInterface;
+use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 use App\Repositories\Implementations\AbsensiPegawaiRepository;
 use App\Repositories\Interfaces\AbsensiPegawaiRepositoryInterface;
@@ -51,6 +55,8 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(PegawaiRepositoryInterface::class, PegawaiRepository::class);
     $this->app->bind(WfhPegawaiRepositoryInterface::class, WfhPegawaiRepository::class);
     $this->app->bind(AbsensiPegawaiRepositoryInterface::class, AbsensiPegawaiRepository::class);
-        $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
+    $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
+    $this->app->bind(PengunjungRepositoryInterface::class, PengunjungRepository::class);
+    $this->app->bind(KunjunganRepositoryInterface::class, KunjunganRepository::class);
   }
 }

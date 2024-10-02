@@ -2,49 +2,47 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\Master\WfhPegawaiResource;
-use App\Models\WfhPegawai;
-use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
+use App\Http\Resources\Master\PengunjungResource;
+use App\Models\Pengunjung;
+use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
+use Symfony\Component\HttpFoundation\Response;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-class WfhPegawaiRepository implements WfhPegawaiRepositoryInterface
+class PengunjungRepository implements PengunjungRepositoryInterface
 {
-
   use ResponseTrait;
   public function create(array $data)
   {
-    //    $existingWfhPegawai = WfhPegawai::where('pegawai_id', $data['pegawai_id'])->first();
+    $existingPengunjung = Pengunjung::where('nama_pengunjung', $data['nama_pengunjung'])->first();
 
-    //     if ($existingWfhPegawai) {
-    //         return $this->alreadyExist('Wfh Pegawai Already Exist');
-    //     }
+    if ($existingPengunjung) {
+      return $this->alreadyExist('Pengunjung Pegawai Already Exist');
+    }
 
-    return $this->created(WfhPegawai::create($data));
+    return $this->created(Pengunjung::create($data));
   }
 
   public function get(Request $request)
   {
     try {
-      $collection = WfhPegawai::with(['pegawai'])->latest();
+      $collection = Pengunjung::latest();
       $keyword = $request->query("search");
       $isNotPaginate = $request->query("not-paginate");
 
       if ($keyword) {
-        $collection->where('nama_pegawai', 'ILIKE', "%$keyword%");
+        $collection->where('nama_pengunjung', 'ILIKE', "%$keyword%");
       }
-
 
       if ($isNotPaginate) {
         $collection = $collection->get();
-        $result = WfhPegawaiResource::collection($collection)->response()->getData(true);
+        $result = PengunjungResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
-        return $this->paginate2($collection, 'Successfully get Data', WfhPegawaiResource::class);
+        return $this->paginate2($collection, 'Successfully get Data', PengunjungResource::class);
       }
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -55,9 +53,9 @@ class WfhPegawaiRepository implements WfhPegawaiRepositoryInterface
     }
   }
 
-  public function getById(string $id): ?WfhPegawai
+  public function getById(string $id): ?Pengunjung
   {
-    return WfhPegawai::find($id);
+    return Pengunjung::find($id);
   }
 
   public function update(string $id, array $data)
@@ -66,7 +64,7 @@ class WfhPegawaiRepository implements WfhPegawaiRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = WfhPegawai::find($id);
+    $model = Pengunjung::find($id);
     if (!$model) {
       return $this->notFound();
     }
@@ -81,12 +79,12 @@ class WfhPegawaiRepository implements WfhPegawaiRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = WfhPegawai::find($id);
+    $model = Pengunjung::find($id);
     if (!$model) {
       return $this->notFound();
+    } else {
+      $model->delete();
+      return $this->deleted();
     }
-
-    $model->delete();
-    return $this->deleted();
   }
 }

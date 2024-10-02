@@ -8,25 +8,28 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class PalmData extends Model
 {
-    use SoftDeletes, HasUuids;
+  use SoftDeletes, HasUuids;
 
-    protected $table = 'palm_data';
+  protected $table = 'palm_data';
 
-    protected $fillable = [
-        'id',
-        'vein_pattern',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+  protected $fillable = [
+    'id',
+    'vein_pattern',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+  ];
 
-    public $incrementing = false;
-    protected $keyType = 'uuid';
-    public $timestamps = true;
+  public $incrementing = false;
+  protected $keyType = 'uuid';
+  public $timestamps = true;
 
-    public function pegawai()
-    {
-        return $this->hasOne(Pegawai::class, 'palm_data_id', 'id');
-    }
+  public function pegawai()
+  {
+    return $this->belongsTo(Pegawai::class, 'palm_data_id', 'id');
+  }
+  public function pengunjung()
+  {
+    return $this->belongsTo(Pengunjung::class, 'palm_data_id', 'id');
+  }
 }
-
