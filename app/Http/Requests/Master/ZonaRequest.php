@@ -31,7 +31,9 @@ class ZonaRequest
       'posisi_X' => 'required|numeric',
       'posisi_Y' => 'required|numeric',
       'parent_id' => 'nullable|uuid',
-      'jenis_restriksi' => 'nullable|string|max:100'
+      'sub_parent_id' => 'nullable|uuid',
+      'jenis_restriksi' => 'nullable|string|max:100',
+      'jenis_restriksi' => 'nullable|string|max:100',
     ];
 
     $messages = [

@@ -2,90 +2,73 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\ZonaResource;
 use App\Models\Zona;
-use App\Repositories\Interfaces\ZonaRepositoryInterface;
-use App\Traits\ResponseTrait;
-use Dotenv\Exception\ValidationException;
-use ErrorException;
 use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
+use App\Http\Resources\Master\ZonaResource;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Str;
+use App\Repositories\Interfaces\ZonaRepositoryInterface;
 
 class ZonaRepository implements ZonaRepositoryInterface
 {
-  use ResponseTrait;
-  public function create(array $data)
-  {
-    $existingZona = Zona::where('nama_zona', $data['nama_zona'])->first();
+    use ResponseTrait;
 
-    if ($existingZona) {
-      return $this->alreadyExist('Zona Already Exist');
+    public function create($data)
+    {
+        $resource =  Zona::create($data);
+
+        if($resource){
+            return $this->created($resource);
+        }
     }
 
-    return $this->created(Zona::create($data));
-  }
+    public function get(Request $request)
+    {
+        try {
+                $collection = Zona::with(['recursiveParents'])
+                ->whereNull('parent_id')
+                ->latest();
 
-  public function get(Request $request)
-  {
-    try {
-      $collection = Zona::with('lokasi')->latest(); // Memuat relasi lokasi
-      $keyword = $request->query("search");
-      $isNotPaginate = $request->query("not-paginate");
+                $keyword = $request->query("search");
+                $isNotPaginate = $request->query("not-paginate");
 
-      if ($keyword) {
-        $collection->where('nama_zona', 'ILIKE', "%$keyword%");
-      }
+                if ($keyword) {
+                    $collection->where('nama_zona', 'ILIKE', "%$keyword%");
+                }
 
-      if ($isNotPaginate) {
-        $collection = $collection->get();
-        $result = ZonaResource::collection($collection)->response()->getData(true);
-        return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
-      } else {
-        return $this->paginate($collection, null, 'Successfully get Data');
-      }
-    } catch (ValidationException $e) {
-      return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
-    } catch (ErrorException $e) {
-      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
-    } catch (\Throwable $th) {
-      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
-    }
-  }
+                if ($isNotPaginate) {
+                    $collection = $collection->get();
+                    $result = ZonaResource::collection($collection)->response()->getData(true);
+                    return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+                } else {
+                    // $result = ZonaResource::collection($collection)->response()->getData(true);
+                    return $this->paginate2($collection, 'Successfully get Data', ZonaResource::class);
+                    // return $this->paginate($collection, null, 'Successfully get Data');
+                }
 
-
-  public function getById(string $id): ?Zona
-  {
-    return Zona::find($id);
-  }
-
-  public function update(string $id, array $data)
-  {
-    if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
+        } catch (\Throwable $th) {
+            return $th;
+        }
     }
 
-    $model = Zona::find($id);
-    if (!$model) {
-      return $this->notFound();
+    public function getById(string $id): ?Zona
+    {
+        return Zona::find($id);
     }
 
-    $model->update($data);
-    return $this->updated();
-  }
-
-  public function delete(string $id)
-  {
-    if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
+    public function update(string $id, array $data): ?Zona
+    {
+        $model = Zona::find($id);
+        if ($model) {
+            $model->update($data);
+            return $model;
+        }
+        return null;
     }
 
-    $model = Zona::find($id);
-    if (!$model) {
-      return $this->notFound();
-    } else {
-      $model->delete();
-      return $this->deleted();
+    public function delete(string $id): bool
+    {
+        $model = Zona::find($id);
+        return $model ? $model->delete() : false;
     }
-  }
 }

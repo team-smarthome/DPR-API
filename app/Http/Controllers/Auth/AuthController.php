@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
-use App\Http\Requests\Auth\LoginRequest;
 use Firebase\JWT\JWT;
-use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\DB;
-use App\Models\UserLogin;
-use Illuminate\Support\Carbon;
 use App\Models\UserLog;
-
+use App\Models\UserLogin;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Auth\LoginRequest;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -97,5 +97,54 @@ class AuthController extends Controller
         ];
 
         return JWT::encode($payload, $this->jwtSecret, 'HS256');
+    }
+
+    public function changePassword(Request $request)
+    {
+        try {
+            $username = $request->input('username');
+            $oldPassword = $request->input('old_password');
+            $newPassword = $request->input('new_password');
+
+            $validator = Validator::make($request->all(), [
+                'username' => 'required|string',
+                'old_password' => 'required|string',
+                'new_password' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => $validator->errors(),
+                ], 422);
+            }
+
+            $user = User::where('username', $username)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => 404,
+                    'message' => 'User tidak ditemukan'
+                ], 404);
+            }
+
+            if (!Hash::check($oldPassword, $user->password)) {
+                return response()->json([
+                    'status' => 422,
+                    'message' => 'Password lama salah'
+                ], 422);
+            }
+
+            $user->password = Hash::make($newPassword);
+            $user->save();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Password berhasil diperbarui'
+            ], 200);
+
+        } catch (\Throwable $th) {
+            return $th;
+        }
     }
 }
