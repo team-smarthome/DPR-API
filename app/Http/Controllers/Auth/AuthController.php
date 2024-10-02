@@ -130,7 +130,7 @@ class AuthController extends Controller
 
             if (!Hash::check($oldPassword, $user->password)) {
                 return response()->json([
-                    'status' => false,
+                    'status' => 422,
                     'message' => 'Password lama salah'
                 ], 422);
             }
