@@ -27,6 +27,8 @@ use App\Repositories\Implementations\WfhPegawaiRepository;
 use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 use App\Repositories\Implementations\AbsensiPegawaiRepository;
 use App\Repositories\Interfaces\AbsensiPegawaiRepositoryInterface;
+use App\Repositories\Implementations\VehicleRepository;
+use App\Repositories\Interfaces\VehicleRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -49,5 +51,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(PegawaiRepositoryInterface::class, PegawaiRepository::class);
     $this->app->bind(WfhPegawaiRepositoryInterface::class, WfhPegawaiRepository::class);
     $this->app->bind(AbsensiPegawaiRepositoryInterface::class, AbsensiPegawaiRepository::class);
+        $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
   }
 }

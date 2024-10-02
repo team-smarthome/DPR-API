@@ -2,47 +2,36 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\Master\DeviceTypeResource;
-use App\Models\DeviceType;
-use Illuminate\Http\Request;
-use App\Repositories\Interfaces\DeviceTypeRepositoryInterface;
+use App\Http\Resources\Master\VehicleResource;
+use App\Models\Vehicle;
+use App\Repositories\Interfaces\VehicleRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-
-class DeviceTypeRepository implements DeviceTypeRepositoryInterface
+class VehicleRepository implements VehicleRepositoryInterface
 {
     use ResponseTrait;
     public function create(array $data)
-    {
-        $existingDevice = DeviceType::where('nama', $data['nama'])->first();
-        
-        if ($existingDevice) {
-            return $this->alreadyExist('Device Type Already Exist');
-        }
-    
-         return $this->created(DeviceType::create($data));
+    {  
+        return $this->created(Vehicle::create($data));
     }
 
     public function get(Request $request)
     {
         try {
-            $collection = DeviceType::latest();
-            $keyword = $request->query("search");
+            $collection = Vehicle::with(['pegawai', 'pengunjung', 'grupVehiclePegawai'])->latest();
             $isNotPaginate = $request->query("not-paginate");
-  
-            if ($keyword) {
-                $collection->where('nama', 'ILIKE', "%$keyword%");
-            }
-  
+
             if ($isNotPaginate) {
                 $collection = $collection->get();
-                $result = DeviceTypeResource::collection($collection)->response()->getData(true);
+                $result = VehicleResource::collection($collection)->response()->getData(true);
                 return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             } else {
-                return $this->paginate($collection, null, 'Successfully get Data');
+                return $this->paginate2($collection, 'Successfully get Data', VehicleResource::class);
             }
         } catch (ValidationException $e) {
             return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -53,9 +42,9 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
         }
     }
 
-    public function getById(string $id): ?DeviceType
+    public function getById(string $id): ?Vehicle
     {
-        return DeviceType::find($id);
+        return Vehicle::find($id);
     }
 
     public function update(string $id, array $data)
@@ -64,7 +53,7 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
             return $this->invalidUUid();
         }
 
-        $model = DeviceType::find($id);
+        $model = Vehicle::find($id);
         if (!$model) {
             return $this->notFound();
         }
@@ -79,7 +68,7 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
             return $this->invalidUUid();
         }
 
-        $model = DeviceType::find($id);
+        $model = Vehicle::find($id);
         if (!$model) {
             return $this->notFound();
         }

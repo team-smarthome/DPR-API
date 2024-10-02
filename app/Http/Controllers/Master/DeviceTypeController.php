@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Master;
 
-use App\Models\DeviceType;
-use Illuminate\Http\Request;
-use App\Traits\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\DeviceTypeRequest;
 use App\Repositories\Interfaces\DeviceTypeRepositoryInterface;
+use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
+use Illuminate\Validation\ValidationException;
 
 class DeviceTypeController extends Controller
 {
@@ -27,38 +27,29 @@ class DeviceTypeController extends Controller
 
     public function store(Request $request)
     {
-        $deviceTypeRequest = new DeviceTypeRequest();
-        $data = $deviceTypeRequest->validate($request);
-        
-        return $this->deviceTypeRepositoryInterface->create($data);
+        try {
+            $deviceTypeRequest = new DeviceTypeRequest();
+            $data = $deviceTypeRequest->validate($request);
+            return $this->deviceTypeRepositoryInterface->create($data);
+        } catch (ValidationException $e) {
+            return $this->alreadyExist('Device Type Already Exist');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $deviceTypeRequest = new DeviceTypeRequest();
-        $data = $deviceTypeRequest->validate($request);
+        try {
+            $deviceTypeRequest = new DeviceTypeRequest();
+            $data = $deviceTypeRequest->validate($request);
 
-        $deviceType = $this->deviceTypeRepositoryInterface->getById($id);
-
-        if ($deviceType == false) {
-        return $this->notFound();
+            return $this->deviceTypeRepositoryInterface->update($id, $data);
+        } catch (ValidationException $e) {
+            return $this->alreadyExist('Device Type Already Exist');
         }
-
-        $this->deviceTypeRepositoryInterface->update($id, $data);
-
-        return $this->updated();
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
-        $deviceType = $this->deviceTypeRepositoryInterface->getById($id);
-
-        if ($deviceType == false) {
-            return $this->notFound();
-          }
-      
-          $this->deviceTypeRepositoryInterface->delete($id);
-      
-          return $this->deleted();
+        return $this->deviceTypeRepositoryInterface->delete($id);
     }
 }
