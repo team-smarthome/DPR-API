@@ -36,7 +36,7 @@ trait ResponseTrait
         if ($collection->isEmpty()) {
             return (new self)->success([], 'Data not found.');
         }
-        
+
         $paginationData = [
             'currentPage' => $collection->currentPage(),
             'pageSize' => $collection->perPage(),
@@ -57,7 +57,7 @@ trait ResponseTrait
     public static function paginate($query, $max_data = null, $message = 'Successfully get Data', $perPage = null)
     {
         $perPage = request()->input('perPage', $perPage ?? self::$defaultPagination);
-        
+
         if (!is_numeric($perPage) || (int)$perPage <= 0) {
             $perPage = self::$defaultPagination;
         }
@@ -69,7 +69,7 @@ trait ResponseTrait
     public static function paginate2($query, $message = 'Successfully get Data', $resourceClass = null)
     {
         $perPage = request()->input('perPage', self::$defaultPagination);
-        
+
         if (!is_numeric($perPage) || (int)$perPage <= 0) {
             $perPage = self::$defaultPagination;
         }

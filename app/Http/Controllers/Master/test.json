@@ -1,0 +1,29 @@
+{
+    "data": [
+      {
+        "id": 1,
+        "nama_zona": "Zona A",
+        "parent": [
+          {
+            "id": 2,
+            "parent_id" : 1,
+            "nama_zona": "Zona AA",
+            "children" : [
+                {
+                    "id" : 3,
+                    "sub_parent_id" : 2,
+                    "nama_zona" : "Zona AAA",
+                    "children" : [
+                        {
+                            "id" : 4,
+                            "sub_parent_id" : 3,
+                            "nama_zona" : "Zona AAAA"
+                        }
+                    ]
+                }
+            ]
+          }
+        ]
+      }
+    ]
+  }

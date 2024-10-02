@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Master;
 
+use App\Models\Zona;
+use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\ZonaRequest;
-use App\Models\Zona;
-use App\Repositories\Interfaces\ZonaRepositoryInterface;
-use App\Traits\ResponseTrait;
 use Dotenv\Exception\ValidationException;
-use Illuminate\Http\Request;
+use App\Repositories\Interfaces\ZonaRepositoryInterface;
 
 class ZonaController extends Controller
 {
@@ -33,13 +33,10 @@ class ZonaController extends Controller
 
   public function store(Request $request)
   {
-    try {
       $zonaRequest = new ZonaRequest();
       $data = $zonaRequest->validate($request);
+
       return $this->zonaRepositoryInterface->create($data);
-    } catch (ValidationException $e) {
-      return $this->alreadyExist('Zona Already Exist');
-    }
   }
 
   public function update(Request $request, $id)
