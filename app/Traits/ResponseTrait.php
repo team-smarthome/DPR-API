@@ -26,6 +26,24 @@ trait ResponseTrait
         return response()->json($result, $status);
     }
 
+    public function wrapResponseNotArray(int $status, string $message, ?array $resource = []): JsonResponse
+    {
+        $result = [
+            'status' => $status,
+            'message' => $message
+        ];
+
+        if (!empty($resource)) {
+                $result['records'] = (object) $resource['data'];
+
+                if (count($resource) > 1) {
+                    $result = array_merge($result, ['pages' => ['links' => $resource['links'], 'meta' => $resource['meta']]]);
+                }
+            }
+
+        return response()->json($result, $status);
+    }
+
     public function success($data = [], $message = 'Success'): JsonResponse
     {
         return $this->wrapResponse(200, $message, ['data' => $data]);
