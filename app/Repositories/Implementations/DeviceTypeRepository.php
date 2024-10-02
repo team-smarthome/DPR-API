@@ -21,7 +21,7 @@ class DeviceTypeRepository implements DeviceTypeRepositoryInterface
             return $this->alreadyExist('Device Type Already Exist');
         }
     
-            return DeviceType::create($data);
+         return $this->created(DeviceType::create($data));
     }
 
     public function get(Request $request)
