@@ -58,4 +58,9 @@ class Pegawai extends Model
     {
         return $this->hasMany(WfhPegawai::class, 'pegawai_id', 'id');
     }
+
+    public function absensiPegawai()
+    {
+        return $this->hasMany(AbsensiPegawai::class, 'pegawai_id', 'id');
+    }
 }
