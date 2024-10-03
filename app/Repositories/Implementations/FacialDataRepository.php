@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Storage;
 class FacialDataRepository implements FacialDataRepositoryInterface
 {
   use ResponseTrait;
+
   public function create(array $data)
   {
     if (isset($data['face_template']) && $this->isBase64Image($data['face_template'])) {
-      $data['face_template'] = $this->saveBase64Image($data['face_template']);
+      $data['face_template'] = $this->saveBase64Image($data['face_template'], 'images/facial_data');
     }
     return $this->created(FacialData::create($data));
   }
+
 
   public function get(Request $request)
   {
@@ -79,30 +81,5 @@ class FacialDataRepository implements FacialDataRepositoryInterface
 
     $model->delete();
     return $this->deleted();
-  }
-
-  private function isBase64Image($base64String)
-  {
-    if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $matches)) {
-      return $matches[1];
-    }
-
-    return false;
-  }
-
-  private function saveBase64Image($base64Image)
-  {
-    $extension = $this->isBase64Image($base64Image);
-
-    if ($extension === false) {
-      throw new \Exception('Invalid base64 image format');
-    }
-
-    $image = base64_decode(preg_replace('/^data:image\/\w+;base64,/', '', $base64Image));
-
-    $fileName = Str::random(10) . '.' . $extension;
-    $filePath = 'images/facial_data/' . $fileName;
-    Storage::disk('public')->put($filePath, $image);
-    return $filePath;
   }
 }
