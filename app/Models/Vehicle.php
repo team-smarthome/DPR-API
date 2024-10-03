@@ -18,6 +18,7 @@ class Vehicle extends Model
         'pegawai_id',
         'pengunjung_id',
         'plat_nomor',
+        'grup_vehicle_pegawai_id',
         'image_url',    
         'created_at',
         'updated_at',
@@ -40,6 +41,6 @@ class Vehicle extends Model
 
     public function grupVehiclePegawai()
     {
-        return $this->hasMany(GrupVehiclePegawai::class, 'vehicle_id', 'id');
+        return $this->belongsTo(GrupVehiclePegawai::class, 'grup_vehicle_pegawai_id', 'id');
     }
 }
