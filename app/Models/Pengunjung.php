@@ -24,6 +24,6 @@ class Pengunjung extends Model
 
   public function facialData()
   {
-    return $this->hasOne(FacialData::class, 'facial_id', 'id');
+    return $this->belongsTo(FacialData::class, 'face_id', 'id');
   }
 }

@@ -19,7 +19,8 @@ class PengunjungResource extends JsonResource
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at,
       'palm_data_id' => $this->palm_data_id,
-      'face_id' => $this->face_id
+      'face_id' => $this->face_id,
+      'face_template' => $this->facialData->face_template,
     ];
   }
 }

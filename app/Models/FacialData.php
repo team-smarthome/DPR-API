@@ -32,6 +32,6 @@ class FacialData extends Model
 
   public function pengunjung()
   {
-    return $this->belongsTo(Pengunjung::class, 'face_id', 'id');
+    return $this->hasOne(Pengunjung::class, 'face_id', 'id');
   }
 }
