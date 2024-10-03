@@ -29,7 +29,7 @@ class PengunjungRepository implements PengunjungRepositoryInterface
   public function get(Request $request)
   {
     try {
-      $collection = Pengunjung::latest();
+      $collection = Pengunjung::with(['facialData'])->latest();
       $keyword = $request->query("search");
       $isNotPaginate = $request->query("not-paginate");
 

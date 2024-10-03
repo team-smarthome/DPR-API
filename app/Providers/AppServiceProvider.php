@@ -30,8 +30,10 @@ use App\Repositories\Interfaces\KunjunganRepositoryInterface;
 use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 use App\Repositories\Implementations\AbsensiPegawaiRepository;
+use App\Repositories\Implementations\FacialDataRepository;
 use App\Repositories\Interfaces\AbsensiPegawaiRepositoryInterface;
 use App\Repositories\Implementations\VehicleRepository;
+use App\Repositories\Interfaces\FacialDataRepositoryInterface;
 use App\Repositories\Interfaces\VehicleRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -58,5 +60,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(VehicleRepositoryInterface::class, VehicleRepository::class);
     $this->app->bind(PengunjungRepositoryInterface::class, PengunjungRepository::class);
     $this->app->bind(KunjunganRepositoryInterface::class, KunjunganRepository::class);
+    $this->app->bind(FacialDataRepositoryInterface::class, FacialDataRepository::class);
   }
 }
