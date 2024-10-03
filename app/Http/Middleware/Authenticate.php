@@ -3,28 +3,14 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
+use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+use Firebase\JWT\ExpiredException;
+use App\Models\UserLogin;
 
 class Authenticate
 {
-    /**
-     * The authentication guard factory instance.
-     *
-     * @var \Illuminate\Contracts\Auth\Factory
-     */
-    protected $auth;
-
-    /**
-     * Create a new middleware instance.
-     *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
-     * @return void
-     */
-    public function __construct(Auth $auth)
-    {
-        $this->auth = $auth;
-    }
-
     /**
      * Handle an incoming request.
      *
@@ -33,12 +19,56 @@ class Authenticate
      * @param  string|null  $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle($request, Closure $next, $role = null)
     {
-        if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Token not provided.'
+            ], 401);
         }
 
-        return $next($request);
+        try {
+            $credentials = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
+            
+            $request->merge(['user_id' => $credentials->pegawai_id]);
+
+            $userLogin = UserLogin::where('user_id', $credentials->sub)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if (!$userLogin || $userLogin->token !== $token) {
+                return response()->json([
+                    'status' => 401,
+                    'message' => 'Unauthorized. Token mismatch.'
+                ], 401);
+            }
+
+            if ($role === 'admin' && !in_array($credentials->nama_role, ['admin', 'super-admin'])) {
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'Forbidden. Access restricted to admins.'
+                ], 403);
+            } elseif ($role === 'super-admin' && $credentials->nama_role !== 'super-admin') {
+                return response()->json([
+                    'status' => 403,
+                    'message' => 'Forbidden. Access restricted to super admins only.'
+                ], 403);
+            } 
+
+            return $next($request);
+        } catch (ExpiredException $e) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Token has expired.'
+            ], 401);
+        } catch (Exception $e) {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized. Invalid token.',
+            ], 401);
+        }
     }
 }
