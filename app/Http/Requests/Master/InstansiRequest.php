@@ -4,34 +4,24 @@ namespace App\Http\Requests\Master;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
+
 
 class InstansiRequest
 {
-    public function validate(Request $request)
-    {
-        $request->merge([
-            'nama_instansi' => trim($request->input('nama_instansi')),
-        ]);
+  public function validate(Request $request)
+  {
 
-        $rules = [
-            'nama_instansi' => [
-                'required',
-                'string',
-                'max:255',
-                \Illuminate\Validation\Rule::unique('instansi', 'nama_instansi')->where(function ($query) {
-                    return $query->whereRaw('LOWER(nama_instansi) = LOWER(?)', [request('nama_instansi')]);
-                }),
-                'regex:/^[a-zA-Z\s]*$/'
-            ],
-        ];
+    $rules = [
+      'nama_instansi' => 'required|string|max:100',
+    ];
 
-        $validator = \Validator::make($request->all(), $rules, $messages);
+    $validator = \Validator::make($request->all(), $rules);
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        return $validator->validated();
+    if ($validator->fails()) {
+      throw new ValidationException($validator);
     }
-}
 
+    return $validator->validated();
+  }
+}
