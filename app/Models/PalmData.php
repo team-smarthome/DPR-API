@@ -26,7 +26,7 @@ class PalmData extends Model
 
   public function pegawai()
   {
-    return $this->belongsTo(Pegawai::class, 'palm_data_id', 'id');
+    return $this->hasOne(Pegawai::class, 'palm_data_id', 'id');
   }
   public function pengunjung()
   {

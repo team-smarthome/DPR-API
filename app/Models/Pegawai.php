@@ -36,9 +36,9 @@ class Pegawai extends Model
 
   public function palmData()
   {
-    return $this->hasOne(PalmData::class, 'palm_data_id', 'id');
+        return $this->belongsTo(PalmData::class, 'palm_data_id', 'id');
   }
-
+  
   public function jabatan()
   {
     return $this->belongsTo(Jabatan::class, 'jabatan_id', 'id');
