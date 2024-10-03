@@ -354,6 +354,11 @@
             "post": {
                 "summary": "Create a new vehicle",
                 "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -451,6 +456,11 @@
             "put": {
                 "summary": "Update an existing Data",
                 "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "id",
@@ -560,6 +570,11 @@
             "delete": {
                 "summary": "Delete an existing Data",
                 "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "id",
