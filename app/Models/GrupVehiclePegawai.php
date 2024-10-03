@@ -28,7 +28,7 @@ class GrupVehiclePegawai extends Model
 
     public function vehicle()
     {
-        return $this->belongsTo(Vehicle::class, 'vehicle_id', 'id');
+        return $this->hasMany(Vehicle::class, 'grup_vehicle_pegawai_id', 'id');
     }
 
 }
