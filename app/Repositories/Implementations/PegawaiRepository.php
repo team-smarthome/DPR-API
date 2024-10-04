@@ -88,7 +88,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
         return $this->deleted();
     }
 
-    public function getMe(Request $request)
+   public function getMe(Request $request)
     {
         $userId = $request->user_id;
         $pegawai = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])
@@ -96,11 +96,18 @@ class PegawaiRepository implements PegawaiRepositoryInterface
             ->first(); 
 
         if ($pegawai) {
-            $result = (new PegawaiResource($pegawai))->response()->getData(true);
-            return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+            $roleId =  $request->role_id; 
+            $roleName = $request->nama_role; 
+            
+            $pegawaiResource = new PegawaiResource($pegawai, $userId, $roleId, $roleName);
+            $result = $pegawaiResource->toArray($request); 
+
+            return $this->wrapResponse2(Response::HTTP_OK, 'Successfully get Data', $result);
         }
-        return $this->wrapResponse(Response::HTTP_NOT_FOUND, 'Data not found');
+        return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
     }
+
+
 
 
 
