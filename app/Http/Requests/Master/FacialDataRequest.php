@@ -13,7 +13,7 @@ class FacialDataRequest
   {
 
     $rules = [
-      'face_template' => 'string'
+      'face_template' => 'required|string'
     ];
 
     $validator = \Validator::make($request->all(), $rules);

@@ -9,6 +9,6 @@ $router->group(['prefix' => 'master'], function () use ($router) {
   $router->group(['middleware' => 'auth:super-admin'], function () use ($router) {
     $router->post('/pengunjung', 'Master\PengunjungController@store');
     $router->put('/pengunjung/{id}', 'Master\PengunjungController@update');
-    $router->delete('/pengunjung/{id}', 'Master\PengunjungController@destroy');
+    $router->delete('/pengunjung/{id}', 'Master\PengunjungController@delete');
   });
 });

@@ -3,6 +3,7 @@
 namespace App\Repositories\Implementations;
 
 use App\Http\Resources\Master\PengunjungResource;
+use App\Models\FacialData;
 use App\Models\Pengunjung;
 use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
@@ -11,19 +12,35 @@ use Dotenv\Exception\ValidationException;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PengunjungRepository implements PengunjungRepositoryInterface
 {
   use ResponseTrait;
+
   public function create(array $data)
   {
-    $existingPengunjung = Pengunjung::where('nama_pengunjung', $data['nama_pengunjung'])->first();
+    DB::beginTransaction();
+    try {
+      if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+        $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+      }
 
-    if ($existingPengunjung) {
-      return $this->alreadyExist('Pengunjung Pegawai Already Exist');
+      $facialData = FacialData::create($data['facial_data']);
+
+      $data['pengunjung']['face_id'] = $facialData->id;
+
+      $pengunjung = Pengunjung::create($data['pengunjung']);
+
+      DB::commit();
+
+      return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
+    } catch (\Exception $e) {
+      Log::info('Facial Data:', $data['facial_data']);
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
     }
-
-    return $this->created(Pengunjung::create($data));
   }
 
   public function get(Request $request)
@@ -58,33 +75,54 @@ class PengunjungRepository implements PengunjungRepositoryInterface
     return Pengunjung::find($id);
   }
 
+
   public function update(string $id, array $data)
   {
-    if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
-    }
+    DB::beginTransaction();
+    try {
 
-    $model = Pengunjung::find($id);
-    if (!$model) {
-      return $this->notFound();
-    }
+      $pengunjung = Pengunjung::findOrFail($id);
 
-    $model->update($data);
-    return $this->updated();
+      if (isset($data['facial_data'])) {
+        $facialData = FacialData::findOrFail($pengunjung->face_id);
+
+        if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+          $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+        }
+
+        $facialData->update($data['facial_data']);
+      }
+
+      $pengunjung->update($data['pengunjung']);
+
+      DB::commit();
+
+      return $this->updated();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
+    }
   }
-
   public function delete(string $id)
   {
-    if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
-    }
+    DB::beginTransaction();
+    try {
+      $pengunjung = Pengunjung::findOrFail($id);
 
-    $model = Pengunjung::find($id);
-    if (!$model) {
-      return $this->notFound();
-    } else {
-      $model->delete();
+      if ($pengunjung->face_id) {
+        $facialData = FacialData::findOrFail($pengunjung->face_id);
+        $facialData->delete();
+      }
+
+
+      $pengunjung->delete();
+
+      DB::commit();
+
       return $this->deleted();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
     }
   }
 }
