@@ -11,10 +11,13 @@ class PengunjungRequest
 {
   public function validate(Request $request)
   {
-
-
     $rules = [
-      'nik' => 'required|string|max:100',
+      'nik' => [
+        'required',
+        'string',
+        'max:100',
+        Rule::unique('pengunjung', 'nik')
+      ],
       'jenis_kelamin' => 'string|max:100',
       'nama_pengunjung' => 'string|max:100',
       'is_active' => 'integer|in:0,1',
