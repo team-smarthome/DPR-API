@@ -2,47 +2,54 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\Master\PengunjungResource;
-use App\Models\Pengunjung;
-use App\Repositories\Interfaces\PengunjungRepositoryInterface;
+use App\Http\Resources\Master\SmartLockerCompartmentResource;
+use App\Models\SmartLockerCompartment;
+use App\Repositories\Interfaces\SmartLockerCompartmentRepositoryInterface;
 use App\Traits\ResponseTrait;
-use Symfony\Component\HttpFoundation\Response;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
 
-class PengunjungRepository implements PengunjungRepositoryInterface
+class SmartLockerCompartmentRepository implements SmartLockerCompartmentRepositoryInterface
 {
   use ResponseTrait;
+
   public function create(array $data)
   {
-    $existingPengunjung = Pengunjung::where('nama_pengunjung', $data['nama_pengunjung'])->first();
+    $existingPengunjung = SmartLockerCompartment::where('number', $data['number'])->first();
 
     if ($existingPengunjung) {
-      return $this->alreadyExist('Pengunjung Pegawai Already Exist');
+      return $this->alreadyExist('Smart Locker Already Exist');
     }
 
-    return $this->created(Pengunjung::create($data));
+    if (isset($data['qr_image']) && $this->isBase64Image($data['qr_image'])) {
+      $data['qr_image'] = $this->saveBase64Image($data['qr_image'], 'images/smartlocker_compartment');
+    }
+
+    return $this->created(SmartLockerCompartment::create($data));
   }
+
+
 
   public function get(Request $request)
   {
     try {
-      $collection = Pengunjung::with(['facialData'])->latest();
+      $collection = SmartLockerCompartment::latest();
       $keyword = $request->query("search");
       $isNotPaginate = $request->query("not-paginate");
 
       if ($keyword) {
-        $collection->where('nama_pengunjung', 'ILIKE', "%$keyword%");
+        $collection->where('number', 'ILIKE', "%$keyword%");
       }
 
       if ($isNotPaginate) {
         $collection = $collection->get();
-        $result = PengunjungResource::collection($collection)->response()->getData(true);
+        $result = SmartLockerCompartmentResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
-        return $this->paginate2($collection, 'Successfully get Data', PengunjungResource::class);
+        return $this->paginate2($collection, 'Successfully get Data', SmartLockerCompartmentResource::class);
       }
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -53,9 +60,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
     }
   }
 
-  public function getById(string $id): ?Pengunjung
+  public function getById(string $id): ?SmartLockerCompartment
   {
-    return Pengunjung::find($id);
+    return SmartLockerCompartment::find($id);
   }
 
   public function update(string $id, array $data)
@@ -64,14 +71,19 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Pengunjung::find($id);
+    $model = SmartLockerCompartment::find($id);
     if (!$model) {
       return $this->notFound();
+    }
+
+    if (isset($data['qr_image']) && $this->isBase64Image($data['qr_image'])) {
+      $data['qr_image'] = $this->saveBase64Image($data['qr_image'], 'images/smartlocker_compartment');
     }
 
     $model->update($data);
     return $this->updated();
   }
+
 
   public function delete(string $id)
   {
@@ -79,7 +91,7 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Pengunjung::find($id);
+    $model = SmartLockerCompartment::find($id);
     if (!$model) {
       return $this->notFound();
     } else {

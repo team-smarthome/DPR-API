@@ -9,6 +9,6 @@ $router->group(['prefix' => 'master'], function () use ($router) {
   $router->group(['middleware' => 'auth:super-admin'], function () use ($router) {
     $router->post('/jabatan', 'Master\JabatanController@store');
     $router->put('/jabatan/{id}', 'Master\JabatanController@update');
-    $router->delete('/jabatan/{id}', 'Master\JabatanController@destroy');
+    $router->delete('/jabatan/{id}', 'Master\JabatanController@delete');
   });
 });

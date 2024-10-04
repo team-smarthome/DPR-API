@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Kunjungan;
+use App\Models\SmartLockerCompartment;
 use Illuminate\Http\Request;
 
-interface KunjunganRepositoryInterface
+interface SmartLockerCompartmentRepositoryInterface
 {
   public function create(array $data);
   public function get(Request $request);

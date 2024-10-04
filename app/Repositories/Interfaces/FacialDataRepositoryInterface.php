@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Kunjungan;
+use App\Models\FacialData;
 use Illuminate\Http\Request;
 
-interface KunjunganRepositoryInterface
+interface FacialDataRepositoryInterface
 {
   public function create(array $data);
   public function get(Request $request);

@@ -7,13 +7,13 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
 
-class InstansiRequest
+class FacialDataRequest
 {
   public function validate(Request $request)
   {
 
     $rules = [
-      'nama_instansi' => 'required|string|max:100',
+      'face_template' => 'string'
     ];
 
     $validator = \Validator::make($request->all(), $rules);

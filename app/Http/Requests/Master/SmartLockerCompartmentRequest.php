@@ -4,16 +4,17 @@ namespace App\Http\Requests\Master;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
 
-
-class InstansiRequest
+class SmartLockerCompartmentRequest
 {
   public function validate(Request $request)
   {
 
     $rules = [
-      'nama_instansi' => 'required|string|max:100',
+      "device_id" => 'required|string|max:36',
+      'number' => 'required|integer',
+      'is_available' => 'required|integer|in:0,1',
+      'qr_image' => 'string',
     ];
 
     $validator = \Validator::make($request->all(), $rules);

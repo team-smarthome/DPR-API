@@ -62,12 +62,14 @@ class Authenticate
         } catch (ExpiredException $e) {
             return response()->json([
                 'status' => 401,
-                'message' => 'Unauthorized. Token has expired.'
+                'message' => 'Unauthorized. Token has expired.' ,
+                'error' => $e->getMessage()
             ], 401);
         } catch (Exception $e) {
             return response()->json([
                 'status' => 401,
                 'message' => 'Unauthorized. Invalid token.',
+                'error' => $e->getMessage()
             ], 401);
         }
     }

@@ -2,47 +2,42 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\Master\PengunjungResource;
-use App\Models\Pengunjung;
-use App\Repositories\Interfaces\PengunjungRepositoryInterface;
+use App\Http\Resources\Master\FacialDataResource;
+use App\Models\FacialData;
+use App\Repositories\Interfaces\FacialDataRepositoryInterface;
 use App\Traits\ResponseTrait;
-use Symfony\Component\HttpFoundation\Response;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
-class PengunjungRepository implements PengunjungRepositoryInterface
+class FacialDataRepository implements FacialDataRepositoryInterface
 {
   use ResponseTrait;
+
   public function create(array $data)
   {
-    $existingPengunjung = Pengunjung::where('nama_pengunjung', $data['nama_pengunjung'])->first();
-
-    if ($existingPengunjung) {
-      return $this->alreadyExist('Pengunjung Pegawai Already Exist');
+    if (isset($data['face_template']) && $this->isBase64Image($data['face_template'])) {
+      $data['face_template'] = $this->saveBase64Image($data['face_template'], 'images/facial_data');
     }
-
-    return $this->created(Pengunjung::create($data));
+    return $this->created(FacialData::create($data));
   }
+
 
   public function get(Request $request)
   {
     try {
-      $collection = Pengunjung::with(['facialData'])->latest();
-      $keyword = $request->query("search");
+      $collection = FacialData::latest();
       $isNotPaginate = $request->query("not-paginate");
-
-      if ($keyword) {
-        $collection->where('nama_pengunjung', 'ILIKE', "%$keyword%");
-      }
 
       if ($isNotPaginate) {
         $collection = $collection->get();
-        $result = PengunjungResource::collection($collection)->response()->getData(true);
+        $result = FacialDataResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
-        return $this->paginate2($collection, 'Successfully get Data', PengunjungResource::class);
+        return $this->paginate2($collection, 'Successfully get Data', FacialDataResource::class);
       }
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -53,9 +48,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
     }
   }
 
-  public function getById(string $id): ?Pengunjung
+  public function getById(string $id): ?FacialData
   {
-    return Pengunjung::find($id);
+    return FacialData::find($id);
   }
 
   public function update(string $id, array $data)
@@ -64,7 +59,7 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Pengunjung::find($id);
+    $model = FacialData::find($id);
     if (!$model) {
       return $this->notFound();
     }
@@ -79,12 +74,12 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->invalidUUid();
     }
 
-    $model = Pengunjung::find($id);
+    $model = FacialData::find($id);
     if (!$model) {
       return $this->notFound();
-    } else {
-      $model->delete();
-      return $this->deleted();
     }
+
+    $model->delete();
+    return $this->deleted();
   }
 }
