@@ -67,8 +67,8 @@ class Authenticate
             ], 401);
         } catch (Exception $e) {
             return response()->json([
-                'status' => 401,
-                'message' => 'Unauthorized. Invalid token.',
+                'status' => 500,
+                'message' => 'Internal Server Error.',
                 'error' => $e->getMessage()
             ], 401);
         }
