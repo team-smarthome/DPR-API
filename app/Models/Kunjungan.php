@@ -15,4 +15,9 @@ class Kunjungan extends Model
   protected $keyType = 'uuid';
   public $incrementing = false;
   public $timestamps = true;
+  public function pengunjung()
+  {
+    return $this->belongsToMany(Pengunjung::class, 'pivot_kunjungan', 'kunjungan_id', 'pengunjung_id');
+  }
+
 }

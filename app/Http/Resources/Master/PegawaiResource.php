@@ -7,11 +7,17 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PegawaiResource extends JsonResource
 {
-   /**
-   * Transform the resource into an array.
-   *
-   * @return array<string, mixed>
-   */
+     protected $userId;
+    protected $roleId;
+    protected $roleName;
+
+    public function __construct($resource, $userId = null, $roleId = null, $roleName = null)
+    {
+        parent::__construct($resource);
+        $this->userId = $userId;
+        $this->roleId = $roleId;
+        $this->roleName = $roleName;
+    }
 
     public function toArray(Request $request)
     {
@@ -24,7 +30,7 @@ class PegawaiResource extends JsonResource
             'jabatan_id' => $this->jabatan_id ?? null,
             'nama_jabatan' => $this->jabatan->nama_jabatan ?? null,
             'instansi_id' => $this->jabatan->instansi_id ?? null,
-            'nama_instansi' => $this->jabatan->instansi->nama_instansi ?? null,  
+            'nama_instansi' => $this->jabatan->instansi->nama_instansi ?? null,
             'email' => $this->email ?? null,
             'phone' => $this->phone ?? null,
             'palm_data_id' => $this->palm_data_id ?? null,
@@ -32,7 +38,10 @@ class PegawaiResource extends JsonResource
             'face_id' => $this->face_id ?? null,
             'face_template' => $this->facialData->face_template ?? null,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
+            'user_id' => $this->userId,
+            'role_id' => $this->roleId,
+            'nama_role' => $this->roleName,
         ];
     }
 }

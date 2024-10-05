@@ -20,7 +20,7 @@ class KunjunganResource extends JsonResource
       'waktu_berakhir' => $this->waktu_berakhir,
       'status' => $this->status,
       'pegawai_tujuan' => $this->pegawai_tujuan,
-      'pengunjung_id' => $this->pengunjung_id,
+      'pengunjung' => PengunjungResource::collection($this->pengunjung),
     ];
   }
 }
