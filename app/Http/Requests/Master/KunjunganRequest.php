@@ -25,6 +25,8 @@ class KunjunganRequest
       'status' => 'string|max:100',
       'pegawai_tujuan_id' => 'string|max:36',
       'pengunjung_id' => 'string|max:36',
+      'pegawai_tujuan_id' => 'string|max:36',
+      'pengunjung_id' => 'array',
     ];
 
 
