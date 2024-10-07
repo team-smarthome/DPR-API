@@ -46,6 +46,49 @@ class PengunjungRepository implements PengunjungRepositoryInterface
   //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
   //   }
   // }
+  // public function create(array $data)
+  // {
+  //   DB::beginTransaction();
+  //   try {
+  //     // Memeriksa dan menyimpan gambar base64
+  //     if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+  //       $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+  //     }
+
+  //     // Menyimpan data facial
+  //     $facialData = FacialData::create($data['facial_data']);
+
+  //     // Menyimpan data pengunjung
+  //     $data['pengunjung']['face_id'] = $facialData->id; // Mengaitkan face_id
+  //     $pengunjung = Pengunjung::create($data['pengunjung']);
+
+  //     // Mendapatkan role_id berdasarkan nama_role 'users'
+  //     $role = Role::where('nama_role', 'users')->first();
+  //     if (!$role) {
+  //       DB::rollBack();
+  //       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'Role not found');
+  //     }
+
+  //     // Insert ke tabel UserPengunjung
+  //     UserPengunjung::create([
+  //       'pengunjung_id' => $pengunjung->id, // ID pengunjung yang baru dibuat
+  //       'username' => $data['pengunjung']['nik'], // Username diisi dengan NIK
+  //       'password' => Hash::make('test1234'), // Password di-hash
+  //       'role_id' => $role->id, // Role ID yang didapatkan // Nilai default
+  //       'is_suspend' => 0, // Nilai default
+  //       'last_login' => Carbon::now(), // Nilai default
+  //     ]);
+
+  //     DB::commit();
+
+  //     return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
+  //   } catch (\Exception $e) {
+  //     Log::info('Facial Data:', $data['facial_data']);
+  //     DB::rollBack();
+  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
+  //   }
+  // }
+
   public function create(array $data)
   {
     DB::beginTransaction();
@@ -58,8 +101,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       // Menyimpan data facial
       $facialData = FacialData::create($data['facial_data']);
 
-      // Menyimpan data pengunjung
+      // Menyimpan data pengunjung tanpa password
       $data['pengunjung']['face_id'] = $facialData->id; // Mengaitkan face_id
+      unset($data['pengunjung']['password']); // Pastikan password tidak dimasukkan ke pengunjung
       $pengunjung = Pengunjung::create($data['pengunjung']);
 
       // Mendapatkan role_id berdasarkan nama_role 'users'
@@ -69,11 +113,11 @@ class PengunjungRepository implements PengunjungRepositoryInterface
         return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'Role not found');
       }
 
-      // Insert ke tabel UserPengunjung
+      // Insert ke tabel UserPengunjung dengan password yang diambil dari payload
       UserPengunjung::create([
         'pengunjung_id' => $pengunjung->id, // ID pengunjung yang baru dibuat
         'username' => $data['pengunjung']['nik'], // Username diisi dengan NIK
-        'password' => Hash::make('test1234'), // Password di-hash
+        'password' => Hash::make($data['password']), // Gunakan password dari payload
         'role_id' => $role->id, // Role ID yang didapatkan // Nilai default
         'is_suspend' => 0, // Nilai default
         'last_login' => Carbon::now(), // Nilai default
@@ -88,6 +132,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
     }
   }
+
+
+
 
   public function get(Request $request)
   {

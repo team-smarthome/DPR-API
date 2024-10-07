@@ -42,6 +42,24 @@ class PengunjungController extends Controller
   //   }
   // }
 
+  // public function store(Request $request)
+  // {
+  //   try {
+  //     $pengunjungRequest = new PengunjungRequest();
+  //     $facialDataRequest = new FacialDataRequest();
+
+  //     $pengunjungData = $pengunjungRequest->validate($request);
+  //     $facialData = $facialDataRequest->validate($request);
+
+  //     return $this->pengunjungRepositoryInterface->create([
+  //       'pengunjung' => $pengunjungData,
+  //       'facial_data' => $facialData
+  //     ]);
+  //   } catch (ValidationException $e) {
+  //     return $this->alreadyExist($e->getMessage());
+  //   }
+  // }
+
   public function store(Request $request)
   {
     try {
@@ -51,14 +69,17 @@ class PengunjungController extends Controller
       $pengunjungData = $pengunjungRequest->validate($request);
       $facialData = $facialDataRequest->validate($request);
 
+      // Tambahkan password ke payload
       return $this->pengunjungRepositoryInterface->create([
         'pengunjung' => $pengunjungData,
-        'facial_data' => $facialData
+        'facial_data' => $facialData,
+        'password' => $request->input('password'), // Ambil password dari request
       ]);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
   }
+
 
   public function update(Request $request, $id)
   {
