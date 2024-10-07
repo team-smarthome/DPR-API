@@ -25,7 +25,7 @@ class PengunjungRequest
       'phone' => 'required|string|max:100',
       'palm_data_id' => 'string|max:36',
       'face_id' => 'string|max:36',
-
+      'password' => 'required|string|min:6',
     ];
 
 
