@@ -183,9 +183,9 @@ trait ResponseTrait
       ];
 
       if ($resource instanceof JsonResource) {
-          $responseData['data'] = $resource->response()->getData(true);
+          $responseData['records'] = $resource->response()->getData(true);
       } elseif (is_array($resource)) {
-          $responseData['data'] = $resource;
+          $responseData['records'] = $resource;
       }
 
       return response()->json($responseData, $status);
