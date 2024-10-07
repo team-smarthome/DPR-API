@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Requests\Master;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
 
-
-class FacialDataRequest
+class LoginPengunjungRequest
 {
   public function validate(Request $request)
   {
 
     $rules = [
-      'face_template' => 'required|string'
+      'username' => 'required|string',
+      'password' => 'required|string|min:6',
     ];
 
     $validator = \Validator::make($request->all(), $rules);
