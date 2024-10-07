@@ -8,16 +8,20 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Role extends Model
 {
-    use SoftDeletes, HasUuids;
+  use SoftDeletes, HasUuids;
 
-    protected $guarded = [];
-    protected $table = 'role';
-    protected $keyType = 'uuid';
-    public $incrementing = false;
-    public $timestamps = true;
+  protected $guarded = [];
+  protected $table = 'role';
+  protected $keyType = 'uuid';
+  public $incrementing = false;
+  public $timestamps = true;
 
-    public function user()
-    {
-        return $this->hasMany(User::class, 'role_id', 'id');
-    }
+  public function user()
+  {
+    return $this->hasMany(User::class, 'role_id', 'id');
+  }
+  public function userPengunjung()
+  {
+    return $this->hasMany(UserPengunjung::class, 'role_id', 'id');
+  }
 }

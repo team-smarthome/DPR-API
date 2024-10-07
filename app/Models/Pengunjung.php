@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Pengunjung extends Model
@@ -25,5 +26,10 @@ class Pengunjung extends Model
   public function facialData()
   {
     return $this->belongsTo(FacialData::class, 'face_id', 'id');
+  }
+
+  public function userPengunjung()
+  {
+    return $this->hasOne(UserPengunjung::class, 'pengunjung_id', 'id');
   }
 }
