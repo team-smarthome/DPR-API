@@ -37,6 +37,8 @@ use App\Repositories\Implementations\VehicleRepository;
 use App\Repositories\Interfaces\FacialDataRepositoryInterface;
 use App\Repositories\Interfaces\SmartLockerCompartmentRepositoryInterface;
 use App\Repositories\Interfaces\VehicleRepositoryInterface;
+use App\Repositories\Implementations\GrupVehiclePegawaiRepository;
+use App\Repositories\Interfaces\GrupVehiclePegawaiRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,5 +66,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(KunjunganRepositoryInterface::class, KunjunganRepository::class);
     $this->app->bind(FacialDataRepositoryInterface::class, FacialDataRepository::class);
     $this->app->bind(SmartLockerCompartmentRepositoryInterface::class, SmartLockerCompartmentRepository::class);
+    $this->app->bind(GrupVehiclePegawaiRepositoryInterface::class, GrupVehiclePegawaiRepository::class);
   }
 }
