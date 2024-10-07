@@ -15,7 +15,7 @@ class GrupVehiclePegawai extends Model
 
     protected $fillable = [
         'id',
-        'ketua_grup',
+        'vehicle_id',
         'nama_grup_vehicle_pegawai',
         'created_at',
         'updated_at',
