@@ -8,6 +8,7 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Response;
 use App\Http\Resources\DeviceResource;
 use App\Repositories\Interfaces\DeviceRepositoryInterface;
+use Illuminate\Validation\ValidationException;
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
@@ -39,7 +40,7 @@ class DeviceRepository implements DeviceRepositoryInterface
         $result = DeviceResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
-        return $this->paginate($collection, null, 'Successfully get Data');
+        return $this->paginate2($collection, 'Successfully get Data', DeviceResource::class);
       }
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
