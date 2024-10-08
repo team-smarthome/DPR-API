@@ -31,34 +31,7 @@ class PengunjungController extends Controller
     return Pengunjung::find($id);
   }
 
-  // public function store(Request $request)
-  // {
-  //   try {
-  //     $pengunjungRequest = new PengunjungRequest();
-  //     $data = $pengunjungRequest->validate($request);
-  //     return $this->pengunjungRepositoryInterface->create($data);
-  //   } catch (ValidationException $e) {
-  //     return $this->alreadyExist($e->getMessage());
-  //   }
-  // }
 
-  // public function store(Request $request)
-  // {
-  //   try {
-  //     $pengunjungRequest = new PengunjungRequest();
-  //     $facialDataRequest = new FacialDataRequest();
-
-  //     $pengunjungData = $pengunjungRequest->validate($request);
-  //     $facialData = $facialDataRequest->validate($request);
-
-  //     return $this->pengunjungRepositoryInterface->create([
-  //       'pengunjung' => $pengunjungData,
-  //       'facial_data' => $facialData
-  //     ]);
-  //   } catch (ValidationException $e) {
-  //     return $this->alreadyExist($e->getMessage());
-  //   }
-  // }
 
   public function store(Request $request)
   {
