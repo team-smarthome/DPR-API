@@ -2,28 +2,57 @@
 
 namespace App\Repositories\Implementations;
 
-use App\Http\Resources\Master\PegawaiResource;
-use App\Models\Pegawai;
-use App\Repositories\Interfaces\PegawaiRepositoryInterface;
-use App\Traits\ResponseTrait;
-use Dotenv\Exception\ValidationException;
 use ErrorException;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Models\Pegawai;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Traits\ResponseTrait;
+use Illuminate\Support\Facades\DB;
+use Dotenv\Exception\ValidationException;
+use App\Http\Resources\Master\PegawaiResource;
+use App\Models\FacialData;
+use App\Models\Role;
+use App\Models\User;
+use Symfony\Component\HttpFoundation\Response;
+use App\Repositories\Interfaces\PegawaiRepositoryInterface;
 
 class PegawaiRepository implements PegawaiRepositoryInterface
 {
     use ResponseTrait;
+
     public function create(array $data)
     {
-        $existingPegawai = Pegawai::where('nip', $data['nip'])->first();
+        try {
+            DB::beginTransaction();
 
-        if ($existingPegawai) {
-            return $this->alreadyExist('Pegawai Already Exist');
+             // ** Check NIP ** //
+            $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
+            if ($existingNip) {
+                DB::rollBack();
+                return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
+            }
+
+            if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])){
+                $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+            }
+
+            //** FacialData **//
+            $facial = FacialData::create($data['facial_data']);
+
+            //** PegawaiData **//
+            $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
+            $pegawai = Pegawai::create($pegawaiData);
+
+            //** UserData **//
+            $role = Role::where('nama_role', 'users')->first();
+            $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
+            $user = User::create($userData);
+
+            DB::commit();
+            return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
+        } catch (\Throwable $th) {
+            return $th;
         }
-        
-        return $this->created(Pegawai::create($data));
     }
 
     public function get(Request $request)
@@ -59,7 +88,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
     }
 
     public function update(string $id, array $data)
-    {   
+    {
         if (!Str::isUuid($id)) {
             return $this->invalidUUid();
         }
@@ -93,22 +122,17 @@ class PegawaiRepository implements PegawaiRepositoryInterface
         $userId = $request->user_id;
         $pegawai = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])
             ->where('id', $userId)
-            ->first(); 
+            ->first();
 
         if ($pegawai) {
-            $roleId =  $request->role_id; 
-            $roleName = $request->nama_role; 
-            
+            $roleId =  $request->role_id;
+            $roleName = $request->nama_role;
+
             $pegawaiResource = new PegawaiResource($pegawai, $userId, $roleId, $roleName);
-            $result = $pegawaiResource->toArray($request); 
+            $result = $pegawaiResource->toArray($request);
 
             return $this->wrapResponse2(Response::HTTP_OK, 'Successfully get Data', $result);
         }
         return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
     }
-
-
-
-
-
 }
