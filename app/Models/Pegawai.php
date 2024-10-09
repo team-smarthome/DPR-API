@@ -34,11 +34,16 @@ class Pegawai extends Model
   protected $keyType = 'uuid';
   public $timestamps = true;
 
+
+  public function user()
+  {
+    return $this->hasOne(User::class, 'pegawai_id', 'id');
+  }
   public function palmData()
   {
-        return $this->belongsTo(PalmData::class, 'palm_data_id', 'id');
+    return $this->belongsTo(PalmData::class, 'palm_data_id', 'id');
   }
-  
+
   public function jabatan()
   {
     return $this->belongsTo(Jabatan::class, 'jabatan_id', 'id');
