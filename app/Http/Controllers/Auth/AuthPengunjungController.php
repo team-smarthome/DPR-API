@@ -46,11 +46,11 @@ class AuthPengunjungController extends Controller
     return $this->wrapResponse(200, 'Login Successfully', ['data' => $resource]);
   }
 
-  public function changePassword(Request $request)
+  public function changePassword(Request $request, $id)
   {
     $changePasswordRequest = new ChangePasswordPengunjungRequest();
     $validatedData = $changePasswordRequest->validate($request);
 
-    return $this->loginPengunjungRepository->changePassword($validatedData);
+    return $this->loginPengunjungRepository->changePassword($validatedData, $id);
   }
 }
