@@ -18,121 +18,138 @@ use App\Repositories\Interfaces\PegawaiRepositoryInterface;
 
 class PegawaiRepository implements PegawaiRepositoryInterface
 {
-    use ResponseTrait;
+  use ResponseTrait;
 
-    public function create(array $data)
-    {
-        try {
-            DB::beginTransaction();
+  public function create(array $data)
+  {
+    try {
+      DB::beginTransaction();
 
-             // ** Check NIP ** //
-            $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
-            if ($existingNip) {
-                DB::rollBack();
-                return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
-            }
+      // ** Check NIP ** //
+      $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
+      if ($existingNip) {
+        DB::rollBack();
+        return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
+      }
 
-            if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])){
-                $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
-            }
+      if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+        $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+      }
 
-            //** FacialData **//
-            $facial = FacialData::create($data['facial_data']);
+      //** FacialData **//
+      $facial = FacialData::create($data['facial_data']);
 
-            //** PegawaiData **//
-            $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
-            $pegawai = Pegawai::create($pegawaiData);
+      //** PegawaiData **//
+      $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
+      $pegawai = Pegawai::create($pegawaiData);
 
-            //** UserData **//
-            $role = Role::where('nama_role', 'users')->first();
-            $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
-            $user = User::create($userData);
+      //** UserData **//
+      $role = Role::where('nama_role', 'users')->first();
+      $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
+      $user = User::create($userData);
 
-            DB::commit();
-            return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
-        } catch (\Throwable $th) {
-            return $th;
-        }
+      DB::commit();
+      return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
+    } catch (\Throwable $th) {
+      return $th;
+    }
+  }
+
+  public function get(Request $request)
+  {
+    try {
+      $collection = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])->latest();
+      $keyword = $request->query("search");
+      $isNotPaginate = $request->query("not-paginate");
+
+      if ($keyword) {
+        $collection->where('nama_pegawai', 'ILIKE', "%$keyword%");
+      }
+
+      if ($isNotPaginate) {
+        $collection = $collection->get();
+        $result = PegawaiResource::collection($collection)->response()->getData(true);
+        return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+      } else {
+        return $this->paginate2($collection, 'Successfully get Data', PegawaiResource::class);
+      }
+    } catch (ValidationException $e) {
+      return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
+    } catch (ErrorException $e) {
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
+    } catch (\Throwable $th) {
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
+    }
+  }
+
+  public function getById(string $id): ?Pegawai
+  {
+    return Pegawai::find($id);
+  }
+
+  public function update(string $id, array $data)
+  {
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
     }
 
-    public function get(Request $request)
-    {
-        try {
-            $collection = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])->latest();
-            $keyword = $request->query("search");
-            $isNotPaginate = $request->query("not-paginate");
-
-            if ($keyword) {
-                $collection->where('nama_pegawai', 'ILIKE', "%$keyword%");
-            }
-
-            if ($isNotPaginate) {
-                $collection = $collection->get();
-                $result = PegawaiResource::collection($collection)->response()->getData(true);
-                return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
-            } else {
-                return $this->paginate2($collection, 'Successfully get Data', PegawaiResource::class);
-            }
-        } catch (ValidationException $e) {
-            return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
-        } catch (ErrorException $e) {
-            return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
-        } catch (\Throwable $th) {
-            return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
-        }
+    $model = Pegawai::find($id);
+    if (!$model) {
+      return $this->notFound();
     }
 
-    public function getById(string $id): ?Pegawai
-    {
-        return Pegawai::find($id);
+    $model->update($data);
+    return $this->updated();
+  }
+
+  public function delete(string $id)
+  {
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
     }
 
-    public function update(string $id, array $data)
-    {
-        if (!Str::isUuid($id)) {
-            return $this->invalidUUid();
-        }
-
-        $model = Pegawai::find($id);
-        if (!$model) {
-            return $this->notFound();
-        }
-
-        $model->update($data);
-        return $this->updated();
+    $model = Pegawai::find($id);
+    if (!$model) {
+      return $this->notFound();
     }
 
-    public function delete(string $id)
-    {
-        if (!Str::isUuid($id)) {
-            return $this->invalidUUid();
-        }
+    $model->delete();
+    return $this->deleted();
+  }
 
-        $model = Pegawai::find($id);
-        if (!$model) {
-            return $this->notFound();
-        }
+  public function getMe(Request $request)
+  {
+    $userId = $request->user_id;
+    $pegawai = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])
+      ->where('id', $userId)
+      ->first();
 
-        $model->delete();
-        return $this->deleted();
+    if ($pegawai) {
+      $roleId =  $request->role_id;
+      $roleName = $request->nama_role;
+
+      $pegawaiResource = new PegawaiResource($pegawai, $userId, $roleId, $roleName);
+      $result = $pegawaiResource->toArray($request);
+
+      return $this->wrapResponse2(Response::HTTP_OK, 'Successfully get Data', $result);
+    }
+    return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
+  }
+
+  public function updateIsActive(string $id, int $isActive)
+  {
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
     }
 
-   public function getMe(Request $request)
-    {
-        $userId = $request->user_id;
-        $pegawai = Pegawai::with(['jabatan.instansi', 'palmData', 'facialData', 'grupPegawai'])
-            ->where('id', $userId)
-            ->first();
-
-        if ($pegawai) {
-            $roleId =  $request->role_id;
-            $roleName = $request->nama_role;
-
-            $pegawaiResource = new PegawaiResource($pegawai, $userId, $roleId, $roleName);
-            $result = $pegawaiResource->toArray($request);
-
-            return $this->wrapResponse2(Response::HTTP_OK, 'Successfully get Data', $result);
-        }
-        return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
+    $pegawai = Pegawai::find($id);
+    if (!$pegawai) {
+      return $this->notFound();
     }
+
+    $pegawai->is_active = $isActive;
+    $pegawai->save();
+
+    return $this->updated();
+  }
 }
