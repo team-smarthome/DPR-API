@@ -24,12 +24,12 @@ class UserPengunjung extends Model
   // Relasi ke model Pengunjung
   public function pengunjung()
   {
-    return $this->belongsTo(Pengunjung::class, 'pengunjung_id');
+    return $this->belongsTo(Pengunjung::class, 'pengunjung_id', 'id');
   }
 
   // Relasi ke model Role
   public function role()
   {
-    return $this->belongsTo(Role::class, 'role_id');
+    return $this->belongsTo(Role::class, 'role_id', 'id');
   }
 }

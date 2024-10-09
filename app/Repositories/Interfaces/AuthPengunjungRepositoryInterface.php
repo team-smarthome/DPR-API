@@ -4,7 +4,9 @@ namespace App\Repositories\Interfaces;
 
 use App\Models\LoginPengunjung;
 
-interface LoginPengunjungRepositoryInterface
+interface AuthPengunjungRepositoryInterface
 {
   public function login(array $validatedData);
+
+  public function changePassword(array $validatedData);
 }
