@@ -11,9 +11,8 @@ class ChangePasswordPengunjungRequest
   {
 
     $rules = [
-      'pengunjung_id' => 'required|exists:user_pengunjung,pengunjung_id',
       'old_password' => 'required|string',
-      'new_password' => 'required|string|min:6|confirmed',
+      'new_password' => 'required|string',
     ];
 
     $validator = \Validator::make($request->all(), $rules);
