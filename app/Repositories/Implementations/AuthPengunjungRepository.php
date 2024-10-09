@@ -8,6 +8,7 @@ use App\Repositories\Interfaces\AuthPengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthPengunjungRepository implements AuthPengunjungRepositoryInterface
 {
@@ -28,22 +29,22 @@ class AuthPengunjungRepository implements AuthPengunjungRepositoryInterface
     return $user;
   }
 
-  public function changePassword(array $validatedData)
+  public function changePassword(array $validatedData, string $id)
   {
-    $user = UserPengunjung::find($validatedData['pengunjung_id']);
+    if (!Str::isUuid($id)) {
+        return $this->invalidUUid();
+    }
+    $user = UserPengunjung::where('pengunjung_id', $id)->first();
 
-    print_r($validatedData['pengunjung_id']);
+    
     if (!$user) {
       return $this->wrapResponse(404, 'User not found');
     }
 
-    // Debugging: Log nilai password lama dan hash-nya
-    \Log::info('Old Password: ' . $validatedData['old_password']);
-    \Log::info('User Password Hash: ' . $user->password);
-
     if (!Hash::check($validatedData['old_password'], $user->password)) {
-      return $this->wrapResponse(400, 'Old password is incorrect');
+        return $this->wrapResponse(403, 'Old password is incorrect');
     }
+
 
     $user->password = Hash::make($validatedData['new_password']);
     $user->save();
