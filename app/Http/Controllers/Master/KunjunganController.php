@@ -32,7 +32,8 @@ class KunjunganController extends Controller
     try {
       $kunjungan = new KunjunganRequest();
       $data = $kunjungan->validate($request);
-      return $this->kunjunganRepositoryInterface->create($data);
+      $approved_by_id = $request->user_id;
+      return $this->kunjunganRepositoryInterface->create($data, $request);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
@@ -44,7 +45,7 @@ class KunjunganController extends Controller
       $kunjungan = new KunjunganRequest();
       $data = $kunjungan->validate($request);
 
-      return $this->kunjunganRepositoryInterface->update($id, $data);
+      return $this->kunjunganRepositoryInterface->update($id, $data, $request);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }

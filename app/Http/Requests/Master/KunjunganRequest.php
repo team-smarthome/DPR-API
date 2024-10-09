@@ -16,10 +16,9 @@ class KunjunganRequest
     $rules = [
       'nama_kunjungan' => 'required|string|max:36',
       'keperluan' => 'required|string|max:100',
-      'is_approved' => 'integer|in:0,1',
+      'is_approved' => 'integer',
       'approved_date' => 'nullable|date',
       'reject_date' => 'nullable|date',
-      'approved_by_id' => 'string|max:36',
       'waktu_mulai' => 'date',
       'waktu_berakhir' => 'date',
       'status' => 'string|max:100',

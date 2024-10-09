@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\DB;
 class KunjunganRepository implements KunjunganRepositoryInterface
 {
   use ResponseTrait;
-  public function create(array $data)
+  public function create(array $data, Request $request)
   {
       DB::beginTransaction();
 
       try {
           $kunjunganData = $data;
           unset($kunjunganData['pengunjung_id']);
+
+          $kunjunganData['approved_by_id'] = $request->user_id;
 
           $existingKunjungan = Kunjungan::where('nama_kunjungan', $kunjunganData['nama_kunjungan'])->first();
 
@@ -49,7 +51,7 @@ class KunjunganRepository implements KunjunganRepositoryInterface
 
           DB::commit();
 
-          return $this->created(new KunjunganResource($kunjungan));
+          return $this->created();
       } catch (\Exception $e) {
           DB::rollBack();
           throw new ErrorException("Gagal membuat kunjungan: " . $e->getMessage());
@@ -72,7 +74,7 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     return Kunjungan::find($id);
   }
 
-  public function update(string $id, array $data)
+  public function update(string $id, array $data, Request $request)
   {
       if (!Str::isUuid($id)) {
           return $this->invalidUUid();
@@ -88,6 +90,8 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       try {
           $kunjunganData = $data;
           unset($kunjunganData['pengunjung_id']);
+
+          $kunjunganData['approved_by_id'] = $request->user_id;
           
           $model->update($kunjunganData);
           DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->delete();
@@ -106,8 +110,11 @@ class KunjunganRepository implements KunjunganRepositoryInterface
           }
 
           DB::commit();
-
-          return $this->updated();
+           $statusMessage = isset($data['is_approved']) 
+            ? ($data['is_approved'] === 1 ? 'approve' : ($data['is_approved'] === 2 ? 'reject' : 'pending')) 
+            : 'pending';
+        
+        return $this->updated($statusMessage);
       } catch (\Exception $e) {
           DB::rollBack();
           throw new ErrorException("Gagal memperbarui kunjungan: " . $e->getMessage());
@@ -132,8 +139,9 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->update(['deleted_at' => now()]);
       $model->delete();
       DB::commit();
+      
 
-      return $this->deleted();
+      return $this->deleted($statusMessage);
     } catch (\Exception $e) {
       DB::rollBack();
       throw new ErrorException("Gagal menghapus kunjungan: " . $e->getMessage());
