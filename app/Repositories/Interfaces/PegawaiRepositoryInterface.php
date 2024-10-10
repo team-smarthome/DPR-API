@@ -13,5 +13,5 @@ interface PegawaiRepositoryInterface
   public function update(string $id, array $data);
   public function delete(string $id);
   public function getMe(Request $request);
-  public function updateIsActive(string $id, int $isActive);
+  public function updateIsActive(array $validatedData, string $id);
 }

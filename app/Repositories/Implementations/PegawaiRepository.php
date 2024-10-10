@@ -15,6 +15,8 @@ use App\Models\Role;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\Interfaces\PegawaiRepositoryInterface;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class PegawaiRepository implements PegawaiRepositoryInterface
 {
@@ -136,20 +138,39 @@ class PegawaiRepository implements PegawaiRepositoryInterface
     return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
   }
 
-  public function updateIsActive(string $id, int $isActive)
+  // public function updateIsActive(string $id, int $isActive)
+  // {
+  //   if (!Str::isUuid($id)) {
+  //     return $this->invalidUUid();
+  //   }
+
+  //   $pegawai = Pegawai::find($id);
+  //   if (!$pegawai) {
+  //     return $this->notFound();
+  //   }
+
+  //   $pegawai->is_active = $isActive;
+  //   $pegawai->save();
+
+  //   return $this->updated();
+  // }
+
+  public function updateIsActive(array $validatedData, string $id)
   {
     if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
+      return $this->wrapResponse(400, 'Invalid UUID');
     }
 
-    $pegawai = Pegawai::find($id);
-    if (!$pegawai) {
-      return $this->notFound();
+    // Mencari user pengunjung berdasarkan ID
+    $user = Pegawai::find($id);
+    if (!$user) {
+      return $this->wrapResponse(404, 'Pegawai not found');
     }
 
-    $pegawai->is_active = $isActive;
-    $pegawai->save();
+    // Update nilai is_active
+    $user->is_active = $validatedData['is_active'];
+    $user->save();
 
-    return $this->updated();
+    return $this->wrapResponse(200, 'Pegawai updated successfully');
   }
 }
