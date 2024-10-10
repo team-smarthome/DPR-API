@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Master;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Carbon\Carbon;
 
 class KunjunganResource extends JsonResource
 {
@@ -13,8 +14,9 @@ class KunjunganResource extends JsonResource
       'nama_kunjungan' => $this->nama_kunjungan,
       'keperluan' => $this->keperluan,
       'is_approved' => $this->is_approved,
-      'approved_date' => $this->approved_date,
-      'reject_date' => $this->reject_date,
+      'pending_date' => $this->is_approved == 0 ? Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null,
+      'approved_date' => $this->is_approved == 1 ? Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null,
+      'reject_date' => $this->is_approved == 2 ? Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null,
       'approved_by_id' => $this->approved_by_id,
       'approved_by' => $this->pegawai->nama_pegawai,
       'waktu_mulai' => $this->waktu_mulai,

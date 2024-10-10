@@ -94,9 +94,9 @@ class KunjunganRepository implements KunjunganRepositoryInterface
           $kunjunganData['approved_by_id'] = $request->user_id;
           
           $model->update($kunjunganData);
-          DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->delete();
 
           if (isset($data['pengunjung_id']) && is_array($data['pengunjung_id'])) {
+            DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->delete();
               $pivotData = [];
               foreach ($data['pengunjung_id'] as $pengunjungId) {
                   $pivotData[] = [
