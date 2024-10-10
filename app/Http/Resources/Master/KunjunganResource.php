@@ -15,11 +15,13 @@ class KunjunganResource extends JsonResource
       'is_approved' => $this->is_approved,
       'approved_date' => $this->approved_date,
       'reject_date' => $this->reject_date,
-      'approved_by' => $this->approved_by,
+      'approved_by_id' => $this->approved_by_id,
+      'approved_by' => $this->pegawai->nama_pegawai,
       'waktu_mulai' => $this->waktu_mulai,
       'waktu_berakhir' => $this->waktu_berakhir,
       'status' => $this->status,
-      'pegawai_tujuan' => $this->pegawai_tujuan,
+      'pegawai_tujuan_id' => $this->pegawai_tujuan_id,
+      'nama_pegawai_tujuan' => $this->pegawai->nama_pegawai,
       'pengunjung' => PengunjungResource::collection($this->pengunjung),
     ];
   }

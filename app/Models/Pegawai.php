@@ -73,4 +73,9 @@ class Pegawai extends Model
   {
     return $this->hasMany(Vehicle::class, 'pegawai_id', 'id');
   }
+
+  public function kunjungan()
+  {
+    return $this->hasMany(Kunjungan::class, 'approved_by_id', 'id');
+  }
 }
