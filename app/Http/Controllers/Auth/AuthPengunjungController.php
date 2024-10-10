@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginPengunjungRequest;
 use App\Http\Requests\Auth\ChangePasswordPengunjungRequest;
 use App\Http\Requests\Auth\UpdateIsActivePengunjungRequest;
 use App\Http\Resources\Auth\UserPengunjungResource;
+use App\Models\Pengunjung;
 use App\Models\UserPengunjung;
 use App\Repositories\Interfaces\AuthPengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
@@ -39,11 +40,11 @@ class AuthPengunjungController extends Controller
     if (!$user || !Hash::check($validatedData['password'], $user->password)) {
       return $this->wrapResponse(401, 'Unauthorized');
     }
-
+    $pegawai = Pengunjung::where('id', $user->pengunjung_id)->first();
     // Mengecek nilai is_active pada user pengunjung
-    if ($user->is_active == 0) {
+    if ($pegawai->is_active == 0) {
       return $this->wrapResponse(403, 'User is inactive');
-    } elseif ($user->is_active == 2) {
+    } elseif ($pegawai->is_active == 2) {
       return $this->wrapResponse(403, 'User is rejected');
     }
 

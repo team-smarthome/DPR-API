@@ -27,6 +27,7 @@ class AuthPengunjungRepository implements AuthPengunjungRepositoryInterface
     }
     print_r($user->pengunjung_id);
     $pegawai = Pengunjung::where('id', $user->pengunjung_id)->first();
+    print_r($pegawai);
     if ($pegawai->is_active == 0) {
       return $this->wrapResponse(403, 'User is inactive');
     } elseif ($pegawai->is_active == 2) {
