@@ -20,4 +20,9 @@ class Kunjungan extends Model
     return $this->belongsToMany(Pengunjung::class, 'pivot_kunjungan', 'kunjungan_id', 'pengunjung_id');
   }
 
+  public function pegawai()
+  {
+    return $this->belongsTo(Pegawai::class, 'approved_by_id', 'id');
+  }
+
 }
