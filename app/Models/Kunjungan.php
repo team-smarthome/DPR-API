@@ -15,6 +15,11 @@ class Kunjungan extends Model
   protected $keyType = 'uuid';
   public $incrementing = false;
   public $timestamps = true;
+
+  protected $casts = [
+    'waktu_mulai' => 'datetime',
+    'waktu_berakhir' => 'datetime',
+  ];
   public function pengunjung()
   {
     return $this->belongsToMany(Pengunjung::class, 'pivot_kunjungan', 'kunjungan_id', 'pengunjung_id');
@@ -24,5 +29,4 @@ class Kunjungan extends Model
   {
     return $this->belongsTo(Pegawai::class, 'approved_by_id', 'id');
   }
-
 }

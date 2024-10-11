@@ -19,12 +19,13 @@ class KunjunganResource extends JsonResource
       'reject_date' => $this->is_approved == 2 ? Carbon::parse($this->updated_at)->format('Y-m-d H:i:s') : null,
       'approved_by_id' => $this->approved_by_id,
       'approved_by' => $this->pegawai->nama_pegawai,
-      'waktu_mulai' => $this->waktu_mulai,
-      'waktu_berakhir' => $this->waktu_berakhir,
+      'waktu_mulai' => $this->waktu_mulai->toIso8601String(),
+      'waktu_berakhir' => $this->waktu_berakhir->toIso8601String(),
       'status' => $this->status,
       'pegawai_tujuan_id' => $this->pegawai_tujuan_id,
       'nama_pegawai_tujuan' => $this->pegawai->nama_pegawai,
-      'pengunjung' => PengunjungResource::collection($this->pengunjung),
+      'pengunjung' => $this->pengunjung,
+
     ];
   }
 }
