@@ -24,7 +24,7 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       $kunjunganData = $data;
       unset($kunjunganData['pengunjung_id']);
 
-      $kunjunganData['approved_by_id'] = $request->user_id;
+      // $kunjunganData['approved_by_id'] = $request->user_id;
 
       $existingKunjungan = Kunjungan::where('nama_kunjungan', $kunjunganData['nama_kunjungan'])->first();
 
