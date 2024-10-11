@@ -12,7 +12,7 @@ $router->group(['prefix' => 'master'], function () use ($router) {
   $router->group(['middleware' => 'auth:admin'], function () use ($router) {
     $router->put('/pegawai/{id}', 'Master\PegawaiController@update');
     $router->delete('/pegawai/{id}', 'Master\PegawaiController@destroy');
-    $router->patch('/pegawai/{id}/is_active', 'Master\PegawaiController@updateIsActive');
+    $router->put('/pegawai/{id}/is_active', 'Master\PegawaiController@updateIsActive');
   });
 });
 
