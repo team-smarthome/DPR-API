@@ -74,7 +74,7 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       $pegawaiId = $request->get('pegawai_id');
       $pengunjungId = $request->get('pengunjung_id');
       $isApproved = $request->get('is_approved');
-      $nama_kunjungan = $request->get('kunjungan');
+      $nama_kunjungan = $request->get('nama_kunjungan');
       $waktuMulai = $request->get('waktu_mulai');
       $waktuBerakhir = $request->get('waktu_berakhir');
 
