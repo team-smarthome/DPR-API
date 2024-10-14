@@ -23,5 +23,5 @@ jobs:
           script: |
             cd /var/www/DPR-API
             git stash
-            git checkout main
+            git checkout development-staging
             git pull origin development-staging
