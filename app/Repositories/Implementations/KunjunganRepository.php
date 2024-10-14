@@ -6,6 +6,7 @@ use App\Http\Resources\Master\KunjunganResource;
 use App\Models\Kunjungan;
 use App\Repositories\Interfaces\KunjunganRepositoryInterface;
 use App\Traits\ResponseTrait;
+use Carbon\Carbon;
 use Dotenv\Exception\ValidationException;
 use ErrorException;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\DB;
 class KunjunganRepository implements KunjunganRepositoryInterface
 {
   use ResponseTrait;
+
   public function create(array $data, Request $request)
   {
     DB::beginTransaction();
@@ -23,8 +25,8 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     try {
       $kunjunganData = $data;
       unset($kunjunganData['pengunjung_id']);
+      $kunjunganData['status'] = 'pending';
 
-      // $kunjunganData['approved_by_id'] = $request->user_id;
 
       $existingKunjungan = Kunjungan::where('nama_kunjungan', $kunjunganData['nama_kunjungan'])->first();
 
@@ -58,15 +60,9 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     }
   }
 
-  // public function get(Request $request)
-  // {
-  //   try {
-  //     $kunjungan = Kunjungan::with(['pengunjung', 'pegawai'])->get();
-  //     return $this->success(KunjunganResource::collection($kunjungan));
-  //   } catch (\Exception $e) {
-  //     throw new ErrorException("Gagal mengambil data kunjungan: " . $e->getMessage());
-  //   }
-  // }
+
+
+
   public function get(Request $request)
   {
     try {
@@ -123,6 +119,8 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     return Kunjungan::find($id);
   }
 
+
+
   public function update(string $id, array $data, Request $request)
   {
     if (!Str::isUuid($id)) {
@@ -133,12 +131,39 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     if (!$model) {
       return $this->notFound();
     }
+    if (isset($data['is_approved'])) {
+      if ($data['is_approved'] == 2 && $model->is_approved == 1 && !is_null($model->approved_date)) {
+        return $this->wrapResponse(422, 'Tidak bisa mengubah status ke tolak setelah disetujui');
+      } elseif ($data['is_approved'] == 1 && $model->is_approved == 2 && !is_null($model->reject_date)) {
+        return $this->wrapResponse(422, 'Tidak bisa mengubah status ke setuju setelah ditolak');
+      }
+    }
 
     DB::beginTransaction();
 
     try {
       $kunjunganData = $data;
       unset($kunjunganData['pengunjung_id']);
+
+
+      if (isset($data['waktu_mulai'])) {
+        $kunjunganData['waktu_mulai'] = $data['waktu_mulai'];
+      }
+      if (isset($data['waktu_berakhir'])) {
+        $kunjunganData['waktu_berakhir'] = $data['waktu_berakhir'];
+      }
+
+      if (isset($data['is_approved'])) {
+        if ($data['is_approved'] == 1) {
+          $kunjunganData['approved_date'] = Carbon::now();
+          $kunjunganData['is_approved'] = 1;
+          $kunjunganData['status'] = 'approved';
+        } elseif ($data['is_approved'] == 2) {
+          $kunjunganData['reject_date'] = Carbon::now();
+          $kunjunganData['is_approved'] = 2;
+          $kunjunganData['status'] = 'rejected';
+        }
+      }
 
       $kunjunganData['approved_by_id'] = $request->user_id;
 
@@ -159,11 +184,7 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       }
 
       DB::commit();
-      $statusMessage = isset($data['is_approved'])
-        ? ($data['is_approved'] === 1 ? 'approve' : ($data['is_approved'] === 2 ? 'reject' : 'pending'))
-        : 'pending';
-
-      return $this->updated($statusMessage);
+      return $this->wrapResponse(200, 'Successfully Updated Data');
     } catch (\Exception $e) {
       DB::rollBack();
       throw new ErrorException("Gagal memperbarui kunjungan: " . $e->getMessage());
