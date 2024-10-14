@@ -21,6 +21,8 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           port: 22
           script: |
+            git config --global --add safe.directory /var/www/DPR-API
+
             cd /var/www/DPR-API
             git stash
             git checkout development-staging
