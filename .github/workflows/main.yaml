@@ -1,0 +1,27 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - development-staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the branch name
+        id: branch
+        run: echo ::set-output name=branch::${{ github.ref }}
+
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/DPR-API
+            git stash
+            git checkout development-staging
+            git pull origin development-staging
