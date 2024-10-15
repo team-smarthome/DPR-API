@@ -387,6 +387,33 @@
                 }
             }
         },
+        "/auth/login/mobile": {
+            "post": {
+                "tags": ["Auth"],
+                "summary": "login pegawai",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "example": {
+                                    "username": "mulyono",
+                                    "password": "test1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {}
+                        }
+                    }
+                }
+            }
+        },
         "/auth/getMe": {
             "get": {
                 "tags": ["Auth"],
