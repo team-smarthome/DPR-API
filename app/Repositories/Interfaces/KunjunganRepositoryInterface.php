@@ -12,4 +12,5 @@ interface KunjunganRepositoryInterface
   public function getById(string $id);
   public function update(string $id, array $data, Request $request);
   public function delete(string $id);
+  public function reschedule(string $id, array $data);
 }

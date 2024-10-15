@@ -138,22 +138,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
     return $this->wrapResponse2(Response::HTTP_NOT_FOUND, 'Data not found');
   }
 
-  // public function updateIsActive(string $id, int $isActive)
-  // {
-  //   if (!Str::isUuid($id)) {
-  //     return $this->invalidUUid();
-  //   }
 
-  //   $pegawai = Pegawai::find($id);
-  //   if (!$pegawai) {
-  //     return $this->notFound();
-  //   }
-
-  //   $pegawai->is_active = $isActive;
-  //   $pegawai->save();
-
-  //   return $this->updated();
-  // }
 
   public function updateIsActive(array $validatedData, string $id)
   {
