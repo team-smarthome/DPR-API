@@ -21,8 +21,6 @@ jobs:
           key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            git config --global --add safe.directory /var/www/dpr-api
-
             cd /var/www/dpr-api
             git stash
             git checkout development-staging
