@@ -8,11 +8,17 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class DeviceType extends Model
 {
-    use SoftDeletes, HasUuids;
+  use SoftDeletes, HasUuids;
 
-    protected $guarded = [];
-    protected $table = 'device_type';
-    protected $keyType = 'uuid';
-    public $incrementing = false;
-    public $timestamps = true;
+  protected $guarded = [];
+  protected $table = 'device_type';
+  protected $keyType = 'uuid';
+  public $incrementing = false;
+  public $timestamps = true;
+
+
+  public function Device()
+  {
+    return $this->hasMany(Device::class, "dtype", "id");
+  }
 }

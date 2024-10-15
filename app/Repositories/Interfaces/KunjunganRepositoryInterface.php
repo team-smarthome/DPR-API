@@ -7,9 +7,10 @@ use Illuminate\Http\Request;
 
 interface KunjunganRepositoryInterface
 {
-  public function create(array $data);
+  public function create(array $data, Request $request);
   public function get(Request $request);
   public function getById(string $id);
-  public function update(string $id, array $data);
+  public function update(string $id, array $data, Request $request);
   public function delete(string $id);
+  public function reschedule(string $id, array $data);
 }

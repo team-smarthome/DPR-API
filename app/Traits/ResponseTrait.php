@@ -174,4 +174,22 @@ trait ResponseTrait
     Storage::disk('public')->put($filePath, $image);
     return $filePath;
   }
+
+  public function wrapResponse2(int $status, string $message, $resource = null)
+  {
+      $responseData = [
+          'status' => $status,
+          'message' => $message,
+      ];
+
+      if ($resource instanceof JsonResource) {
+          $responseData['records'] = $resource->response()->getData(true);
+      } elseif (is_array($resource)) {
+          $responseData['records'] = $resource;
+      }
+
+      return response()->json($responseData, $status);
+  }
+
+
 }

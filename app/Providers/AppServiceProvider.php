@@ -31,12 +31,20 @@ use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 use App\Repositories\Implementations\AbsensiPegawaiRepository;
 use App\Repositories\Implementations\FacialDataRepository;
+use App\Repositories\Implementations\AuthPengunjungRepository;
+use App\Repositories\Implementations\RentSmartLockerRepository;
 use App\Repositories\Implementations\SmartLockerCompartmentRepository;
 use App\Repositories\Interfaces\AbsensiPegawaiRepositoryInterface;
 use App\Repositories\Implementations\VehicleRepository;
 use App\Repositories\Interfaces\FacialDataRepositoryInterface;
+use App\Repositories\Interfaces\AuthPengunjungRepositoryInterface;
+use App\Repositories\Interfaces\RentSmartLockerRepositoryInterface;
 use App\Repositories\Interfaces\SmartLockerCompartmentRepositoryInterface;
 use App\Repositories\Interfaces\VehicleRepositoryInterface;
+use App\Repositories\Implementations\GrupVehiclePegawaiRepository;
+use App\Repositories\Implementations\UserRepository;
+use App\Repositories\Interfaces\GrupVehiclePegawaiRepositoryInterface;
+use App\Repositories\Interfaces\UserRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -64,5 +72,9 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(KunjunganRepositoryInterface::class, KunjunganRepository::class);
     $this->app->bind(FacialDataRepositoryInterface::class, FacialDataRepository::class);
     $this->app->bind(SmartLockerCompartmentRepositoryInterface::class, SmartLockerCompartmentRepository::class);
+    $this->app->bind(GrupVehiclePegawaiRepositoryInterface::class, GrupVehiclePegawaiRepository::class);
+    $this->app->bind(RentSmartLockerRepositoryInterface::class, RentSmartLockerRepository::class);
+    $this->app->bind(AuthPengunjungRepositoryInterface::class, AuthPengunjungRepository::class);
+    $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
   }
 }

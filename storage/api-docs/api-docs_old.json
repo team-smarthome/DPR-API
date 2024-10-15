@@ -1,0 +1,672 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "DPR API Documentation",
+        "version": "1.0.0",
+        "description": "API documentation for the DPR API"
+    },
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "summary": "Login to get access token",
+                "tags": ["Auth"],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                },
+                                "example": {
+                                    "username": "mulyono",
+                                    "password": "test1234"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2MjlmYTk2ZC03NTk1LTQ5ZDktODhkNi02NjU5MDBmOTc0NGUiLCJwZWdhd2FpX2lkIjoiMTA5MDkyNTctMTk4Ni03OTg4LTk4MDMtMDI0MDg4Njc2MDA5IiwiaWF0IjoxNzI3OTM3MTcyLCJleHAiOjE3Mjc5NDA3NzIsInJvbGVfaWQiOiIwMTkyMzI1YS02Mzg4LTcyYWEtOGM3ZC0xYTgxOWE3MDFmMmYiLCJuYW1hX3JvbGUiOiJzdXBlci1hZG1pbiJ9.QG23Wso5e0-TWcRyLkLsY611OAbeoRIoZbiOfKj3vYs"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/getMe": {
+            "get": {
+                "summary": "Get current user information",
+                "tags": ["Auth"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully get Data"
+                                        },
+                                        "records": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string",
+                                                    "example": "10909257-1986-7988-9803-024088676009"
+                                                },
+                                                "nip": {
+                                                    "type": "string",
+                                                    "example": "123456"
+                                                },
+                                                "nama_pegawai": {
+                                                    "type": "string",
+                                                    "example": "John Doe"
+                                                },
+                                                "jenis_kelamin": {
+                                                    "type": "string",
+                                                    "example": "Laki-laki"
+                                                },
+                                                "is_active": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "jabatan_id": {
+                                                    "type": "string",
+                                                    "example": "jabatan-001"
+                                                },
+                                                "nama_jabatan": {
+                                                    "type": "string",
+                                                    "example": "Software Engineer"
+                                                },
+                                                "instansi_id": {
+                                                    "type": "string",
+                                                    "example": "instansi-001"
+                                                },
+                                                "nama_instansi": {
+                                                    "type": "string",
+                                                    "example": "PT. Contoh Perusahaan"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "example": "john.doe@example.com"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "example": "+62123456789"
+                                                },
+                                                "palm_data_id": {
+                                                    "type": "string",
+                                                    "example": "palm-001"
+                                                },
+                                                "vein_pattern": {
+                                                    "type": "string",
+                                                    "example": "vein-pattern-example"
+                                                },
+                                                "face_id": {
+                                                    "type": "string",
+                                                    "example": "face-001"
+                                                },
+                                                "face_template": {
+                                                    "type": "string",
+                                                    "example": "template-data"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-03T06:49:17.729Z"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "example": "2024-10-03T06:49:17.729Z"
+                                                }
+                                            },
+                                            "required": [
+                                                "id",
+                                                "nip",
+                                                "nama_pegawai",
+                                                "jenis_kelamin",
+                                                "is_active",
+                                                "jabatan_id",
+                                                "nama_jabatan",
+                                                "instansi_id",
+                                                "nama_instansi",
+                                                "email",
+                                                "phone",
+                                                "palm_data_id",
+                                                "vein_pattern",
+                                                "face_id",
+                                                "face_template",
+                                                "created_at",
+                                                "updated_at"
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/master/vehicle": {
+            "get": {
+                "summary": "Get an existing Data",
+                "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully get Data"
+                                        },
+                                        "records": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string",
+                                                        "example": "9d27a95d-b078-4759-a3a4-dab114df000b"
+                                                    },
+                                                    "plat_nomor": {
+                                                        "type": "string",
+                                                        "example": "F7898HYU"
+                                                    },
+                                                    "image_url": {
+                                                        "type": "string",
+                                                        "example": "images/vehicle/kbnWiGZPK2.jpeg"
+                                                    },
+                                                    "grup_vehicle_pegawai_id": {
+                                                        "type": "string",
+                                                        "nullable": true,
+                                                        "example": null
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-10-03T06:25:07.000000Z"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "example": "2024-10-03T06:25:07.000000Z"
+                                                    },
+                                                    "pegawai_id": {
+                                                        "type": "string",
+                                                        "example": "9d23dacc-8222-4287-a8f7-011850d06987"
+                                                    },
+                                                    "nip": {
+                                                        "type": "string",
+                                                        "example": "12345"
+                                                    },
+                                                    "nama_pegawai": {
+                                                        "type": "string",
+                                                        "example": "Bagas Arya"
+                                                    }
+                                                },
+                                                "required": [
+                                                    "id",
+                                                    "plat_nomor",
+                                                    "image_url",
+                                                    "grup_vehicle_pegawai_id",
+                                                    "created_at",
+                                                    "updated_at",
+                                                    "pegawai_id",
+                                                    "nip",
+                                                    "nama_pegawai"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "required": ["status", "message", "records"]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Create a new vehicle",
+                "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "pegawai_id": {
+                                        "type": "string",
+                                        "example": "9d23dacc-8222-4287-a8f7-011850d06987"
+                                    },
+                                    "pengunjung_id": {
+                                        "type": "string",
+                                        "example": null
+                                    },
+                                    "plat_nomor": {
+                                        "type": "string",
+                                        "example": "B1232TAF"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/"
+                                    },
+                                    "grup_vehicle_pegawai_id": {
+                                        "type": "string",
+                                        "example": null
+                                    }
+                                },
+                                "required": [
+                                    "pegawai_id",
+                                    "plat_nomor",
+                                    "image_url"
+                                ],
+                                "example": {
+                                    "pegawai_id": "9d23dacc-8222-4287-a8f7-011850d06987",
+                                    "pengunjung_id": null,
+                                    "plat_nomor": "B1232TAF",
+                                    "image_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/",
+                                    "grup_vehicle_pegawai_id": null
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successfully created Data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 201
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully created Data"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/master/vehicle/{id}": {
+            "put": {
+                "summary": "Update an existing Data",
+                "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID of the api to update",
+                        "schema": {
+                            "type": "string",
+                            "example": "9d26046e-9ded-4b38-87b8-dc275e14d509"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "pegawai_id": {
+                                        "type": "string",
+                                        "example": "9d23dacc-8222-4287-a8f7-011850d06987"
+                                    },
+                                    "pengunjung_id": {
+                                        "type": "string",
+                                        "example": null
+                                    },
+                                    "plat_nomor": {
+                                        "type": "string",
+                                        "example": "B1232TAF"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/"
+                                    },
+                                    "grup_vehicle_pegawai_id": {
+                                        "type": "string",
+                                        "example": null
+                                    }
+                                },
+                                "required": [
+                                    "pegawai_id",
+                                    "plat_nomor",
+                                    "image_url"
+                                ],
+                                "example": {
+                                    "pegawai_id": "9d23dacc-8222-4287-a8f7-011850d06987",
+                                    "pengunjung_id": null,
+                                    "plat_nomor": "B1232TAF",
+                                    "image_url": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/",
+                                    "grup_vehicle_pegawai_id": null
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successfully updated Data'",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully updated Data'"
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete an existing Data",
+                "tags": ["Master"],
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "description": "ID of the api to delete",
+                        "schema": {
+                            "type": "string",
+                            "example": "9d26046e-9ded-4b38-87b8-dc275e14d509"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully deleted Data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 200
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully deleted Data"
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Vehicle not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Vehicle not found"
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 401
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Unauthorized. Token has expired.",
+                                                "Unauthorized. Token mismatch.",
+                                                "Unauthorized. Token not provided.",
+                                                "Unauthorized. Invalid token."
+                                            ]
+                                        }
+                                    },
+                                    "required": ["status", "message"]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "BearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}

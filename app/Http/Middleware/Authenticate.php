@@ -33,7 +33,12 @@ class Authenticate
         try {
             $credentials = JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
             
-            $request->merge(['user_id' => $credentials->pegawai_id]);
+            $request->merge([
+                'user_id' => $credentials->pegawai_id,
+                'role_id' => $credentials->role_id ?? null,
+                'nama_role' => $credentials->nama_role ?? null
+            ]);
+            
 
             $userLogin = UserLogin::where('user_id', $credentials->sub)
                 ->orderBy('created_at', 'desc')
@@ -62,12 +67,14 @@ class Authenticate
         } catch (ExpiredException $e) {
             return response()->json([
                 'status' => 401,
-                'message' => 'Unauthorized. Token has expired.'
+                'message' => 'Unauthorized. Token has expired.' ,
+                'error' => $e->getMessage()
             ], 401);
         } catch (Exception $e) {
             return response()->json([
-                'status' => 401,
-                'message' => 'Unauthorized. Invalid token.',
+                'status' => 500,
+                'message' => 'Internal Server Error.',
+                'error' => $e->getMessage()
             ], 401);
         }
     }

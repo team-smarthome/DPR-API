@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\FacialDataRequest;
 use App\Http\Requests\Master\PengunjungRequest;
 use App\Models\Pengunjung;
 use App\Repositories\Interfaces\PengunjungRepositoryInterface;
@@ -30,16 +31,28 @@ class PengunjungController extends Controller
     return Pengunjung::find($id);
   }
 
+
+
   public function store(Request $request)
   {
     try {
       $pengunjungRequest = new PengunjungRequest();
-      $data = $pengunjungRequest->validate($request);
-      return $this->pengunjungRepositoryInterface->create($data);
+      $facialDataRequest = new FacialDataRequest();
+
+      $pengunjungData = $pengunjungRequest->validate($request);
+      $facialData = $facialDataRequest->validate($request);
+
+      // Tambahkan password ke payload
+      return $this->pengunjungRepositoryInterface->create([
+        'pengunjung' => $pengunjungData,
+        'facial_data' => $facialData,
+        'password' => $request->input('password'), // Ambil password dari request
+      ]);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
   }
+
 
   public function update(Request $request, $id)
   {
@@ -47,13 +60,35 @@ class PengunjungController extends Controller
       $pengunjungRequest = new PengunjungRequest();
       $data = $pengunjungRequest->validate($request);
 
-      return $this->pengunjungRepositoryInterface->update($id, $data);
+      // Validasi data facial jika ada
+      $facialDataRequest = new FacialDataRequest();
+      $facialData = $facialDataRequest->validate($request);
+
+      // Gabungkan data pengunjung dan facial
+      $combinedData = [
+        'pengunjung' => $data,
+        'facial_data' => $facialData
+      ];
+
+      return $this->pengunjungRepositoryInterface->update($id, $combinedData);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
   }
 
-  public function destroy($id)
+  // public function update(Request $request, $id)
+  // {
+  //   try {
+  //     $pengunjungRequest = new PengunjungRequest();
+  //     $data = $pengunjungRequest->validate($request);
+
+  //     return $this->pengunjungRepositoryInterface->update($id, $data);
+  //   } catch (ValidationException $e) {
+  //     return $this->alreadyExist($e->getMessage());
+  //   }
+  // }
+
+  public function delete($id)
   {
     return $this->pengunjungRepositoryInterface->delete($id);
   }
