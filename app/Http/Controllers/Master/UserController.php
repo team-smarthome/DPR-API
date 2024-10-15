@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Master\SetRoleRequest;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Traits\ResponseTrait;
@@ -22,6 +23,7 @@ class UserController extends Controller
   {
     return $this->usersRepositoryInterface->get($request);
   }
+
   public function show($id)
   {
     return User::find($id);
@@ -42,5 +44,12 @@ class UserController extends Controller
   public function destroy($id)
   {
     return User::destroy($id);
+  }
+
+  public function updateRoleId(Request $request, $id)
+  {
+    $updateRoleIdRequest = new SetRoleRequest();
+    $validatedData = $updateRoleIdRequest->validate($request);
+    return $this->usersRepositoryInterface->updateRoleId($validatedData, $id);
   }
 }
