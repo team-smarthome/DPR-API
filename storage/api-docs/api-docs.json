@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "https://virtserver.swaggerhub.com/HIMTELIPTEK2022_1/test/1.0.0",
+            "url": "http://103.84.207.129",
             "description": "SwaggerHub API Auto Mocking"
         },
         {
@@ -360,7 +360,7 @@
                 }
             }
         },
-        "/DPR-API/public/auth/login": {
+        "/auth/login": {
             "post": {
                 "tags": ["Auth"],
                 "summary": "login pegawai",
