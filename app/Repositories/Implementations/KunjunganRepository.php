@@ -184,7 +184,10 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       }
 
       DB::commit();
-      return $this->wrapResponse(200, 'Successfully Updated Data');
+      $statusMessage = isset($data['is_approved']) 
+      ? ($data['is_approved'] === 1 ? 'approve' : ($data['is_approved'] === 2 ? 'reject' : 'pending')) 
+      : 'pending';
+      return $this->updated($statusMessage);
     } catch (\Exception $e) {
       DB::rollBack();
       throw new ErrorException("Gagal memperbarui kunjungan: " . $e->getMessage());
