@@ -18,12 +18,10 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.PRIVATE_KEY }}
           port: 22
           script: |
-            git config --global --add safe.directory /var/www/DPR-API
-
-            cd /var/www/DPR-API
+            cd /var/www/dpr-api
             git stash
             git checkout development-staging
             git pull origin development-staging
