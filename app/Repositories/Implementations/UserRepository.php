@@ -10,6 +10,7 @@ use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Str;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -60,5 +61,22 @@ class UserRepository implements UserRepositoryInterface
   {
     $model = User::find($id);
     return $model ? $model->delete() : false;
+  }
+
+  public function updateRoleId(array $validatedData, string $id)
+  {
+    if (!Str::isUuid($id)) {
+      return $this->wrapResponse(400, 'Invalid UUID');
+    }
+
+    $user = User::find($id);
+    if (!$user) {
+      return $this->wrapResponse(404, 'User not found');
+    }
+    print_r($validatedData);
+    $user->role_id = $validatedData['role_id'];
+    $user->save();
+
+    return $this->wrapResponse(200, 'User role updated successfully');
   }
 }

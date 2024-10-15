@@ -194,6 +194,37 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     }
   }
 
+  public function reschedule(string $id, array $data)
+  {
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
+    }
+
+    $model = Kunjungan::find($id);
+    if (!$model) {
+      return $this->notFound();
+    }
+
+    DB::beginTransaction();
+
+    try {
+      $rescheduleData = [];
+      if (isset($data['waktu_mulai'])) {
+        $rescheduleData['waktu_mulai'] = $data['waktu_mulai'];
+      }
+      if (isset($data['waktu_berakhir'])) {
+        $rescheduleData['waktu_berakhir'] = $data['waktu_berakhir'];
+      }
+
+      $model->update($rescheduleData);
+
+      DB::commit();
+      return $this->wrapResponse(200, 'Successfully Reschedule Data');
+    } catch (\Exception $e) {
+      DB::rollBack();
+      throw new ErrorException("Failed to reschedule visit: " . $e->getMessage());
+    }
+  }
 
   public function delete(string $id)
   {
@@ -209,12 +240,12 @@ class KunjunganRepository implements KunjunganRepositoryInterface
     DB::beginTransaction();
 
     try {
-      DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->update(['deleted_at' => now()]);
+      DB::table('pivot_kunjungan')->where('kunjungan_id', $model->id)->update(['deleted_at' => Carbon::now()]);
       $model->delete();
       DB::commit();
 
 
-      return $this->deleted($statusMessage);
+      return $this->deleted();
     } catch (\Exception $e) {
       DB::rollBack();
       throw new ErrorException("Gagal menghapus kunjungan: " . $e->getMessage());
