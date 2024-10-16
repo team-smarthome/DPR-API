@@ -48,8 +48,9 @@ class UserController extends Controller
 
   public function updateRoleId(Request $request, $id)
   {
-    $updateRoleIdRequest = new SetRoleRequest();
-    $validatedData = $updateRoleIdRequest->validate($request);
-    return $this->usersRepositoryInterface->updateRoleId($validatedData, $id);
+    // $updateRoleIdRequest = new SetRoleRequest();
+    // $validatedData = $updateRoleIdRequest->validate($request);
+    $roleId = $request->input('roleId');
+    return $this->usersRepositoryInterface->updateRoleId($roleId, $id);
   }
 }
