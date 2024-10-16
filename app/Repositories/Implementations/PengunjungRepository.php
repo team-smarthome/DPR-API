@@ -74,13 +74,17 @@ class PengunjungRepository implements PengunjungRepositoryInterface
   {
     try {
       $collection = Pengunjung::with(['facialData'])->latest();
-      $keyword = $request->query("search");
+      $keyword = $request->query("nama_pengunjung");
       $isNotPaginate = $request->query("not-paginate");
+      $nik = $request->query("nik");
 
       if ($keyword) {
         $collection->where('nama_pengunjung', 'ILIKE', "%$keyword%");
       }
 
+      if ($nik) {
+        $collection->where('nik', 'ILIKE', "%$nik%");
+      }
       if ($isNotPaginate) {
         $collection = $collection->get();
         $result = PengunjungResource::collection($collection)->response()->getData(true);
