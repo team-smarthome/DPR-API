@@ -63,7 +63,7 @@ class UserRepository implements UserRepositoryInterface
     return $model ? $model->delete() : false;
   }
 
-  public function updateRoleId(array $validatedData, string $id)
+  public function updateRoleId($roleId, string $id)
   {
     if (!Str::isUuid($id)) {
       return $this->wrapResponse(400, 'Invalid UUID');
@@ -73,10 +73,8 @@ class UserRepository implements UserRepositoryInterface
     if (!$user) {
       return $this->wrapResponse(404, 'User not found');
     }
-    print_r($validatedData);
-    $user->role_id = $validatedData['role_id'];
+    $user->role_id = $roleId;
     $user->save();
-
     return $this->wrapResponse(200, 'User role updated successfully');
   }
 }

@@ -12,7 +12,7 @@ class SetRoleRequest
   public function validate(Request $request)
   {
     $rules = [
-      'role_id' => 'string',
+      'roleId' => 'string|max:36',
     ];
 
     $validator = app('validator')->make($request->all(), $rules);
