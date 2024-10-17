@@ -23,6 +23,7 @@ class PegawaiRequest
       'palm_data_id' => 'string|max:36',
       'face_id' => 'string|max:36',
       'grup_pegawai_id' => 'max:36',
+      'role_id' => 'max:36',
     ];
 
 

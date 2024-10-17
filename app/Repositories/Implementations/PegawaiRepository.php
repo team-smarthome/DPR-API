@@ -91,17 +91,33 @@ class PegawaiRepository implements PegawaiRepositoryInterface
 
   public function update(string $id, array $data)
   {
-    if (!Str::isUuid($id)) {
-      return $this->invalidUUid();
-    }
+      if (!Str::isUuid($id)) {
+          return $this->invalidUUid();
+      }
 
-    $model = Pegawai::find($id);
-    if (!$model) {
-      return $this->notFound();
-    }
+      $model = Pegawai::find($id);
+      if (!$model) {
+          return $this->notFound();
+      }
 
-    $model->update($data);
-    return $this->updated();
+      DB::beginTransaction();
+
+      try {
+          $model->update($data);
+          if (isset($data['role_id'])) {
+              $user = User::where('pegawai_id', $id)->first();
+              if ($user) {
+                  $user->role_id = $data['role_id'];
+                  $user->save();
+              }
+          }
+          DB::commit();
+
+          return $this->updated();
+      } catch (\Exception $e) {
+          DB::rollBack();
+          return $this->error($e->getMessage());
+      }
   }
 
   public function delete(string $id)
