@@ -28,18 +28,17 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       $kunjunganData['status'] = 'pending';
 
 
-      $existingKunjungan = Kunjungan::where('nama_kunjungan', $kunjunganData['nama_kunjungan'])->first();
-
-      if ($existingKunjungan) {
+      $currentPengunjungId = $request->input('created_by_id');
+      if ($data['pengunjung_id'][0] !== $currentPengunjungId) {
         DB::rollBack();
-        return $this->alreadyExist('Kunjungan Already Exist');
+        return $this->wrapResponse(400, 'Invalid creator. You are not the creator of this visit');
       }
 
       $kunjungan = Kunjungan::create($kunjunganData);
 
+
       if (isset($data['pengunjung_id']) && is_array($data['pengunjung_id'])) {
         $pivotData = [];
-
         foreach ($data['pengunjung_id'] as $pengunjungId) {
           $pivotData[] = [
             'id' => Str::uuid(),
@@ -47,18 +46,18 @@ class KunjunganRepository implements KunjunganRepositoryInterface
             'pengunjung_id' => $pengunjungId
           ];
         }
-
         DB::table('pivot_kunjungan')->insert($pivotData);
       }
 
       DB::commit();
-
       return $this->created();
     } catch (\Exception $e) {
       DB::rollBack();
       throw new ErrorException("Gagal membuat kunjungan: " . $e->getMessage());
     }
   }
+
+
 
 
 
@@ -184,9 +183,9 @@ class KunjunganRepository implements KunjunganRepositoryInterface
       }
 
       DB::commit();
-      $statusMessage = isset($data['is_approved']) 
-      ? ($data['is_approved'] === 1 ? 'approve' : ($data['is_approved'] === 2 ? 'reject' : 'pending')) 
-      : 'pending';
+      $statusMessage = isset($data['is_approved'])
+        ? ($data['is_approved'] === 1 ? 'approve' : ($data['is_approved'] === 2 ? 'reject' : 'pending'))
+        : 'pending';
       return $this->updated($statusMessage);
     } catch (\Exception $e) {
       DB::rollBack();
