@@ -6,11 +6,11 @@
     },
     "servers": [
         {
-            "url": "http://103.84.207.129",
+            "url": "https://dpr-api.transforme.co.id/",
             "description": "SwaggerHub API Auto Mocking"
         },
         {
-            "url": "http://localhost:8000"
+            "url": "https://dpr-api.transforme.co.id/"
         },
         {
             "url": "http://{{serviceurl}}"
