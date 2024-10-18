@@ -24,23 +24,47 @@ class PengunjungRepository implements PengunjungRepositoryInterface
   use ResponseTrait;
 
 
-
-
   public function create(array $data)
   {
     DB::beginTransaction();
     try {
+      $existingPengunjung = Pengunjung::where('nik', $data['pengunjung']['nik'])->first();
+
+      if ($existingPengunjung) {
+        $existingUserPengunjung = UserPengunjung::where('pengunjung_id', $existingPengunjung->id)->first();
+
+        if ($existingUserPengunjung) {
+          DB::rollBack();
+          return $this->wrapResponse(Response::HTTP_CONFLICT, 'Data already exists in both pengunjung and user_pengunjung table');
+        } else {
+          $role = Role::where('nama_role', 'users')->first();
+          if (!$role) {
+            DB::rollBack();
+            return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'Role not found');
+          }
+
+          UserPengunjung::create([
+            'pengunjung_id' => $existingPengunjung->id,
+            'username' => $data['pengunjung']['nik'],
+            'password' => Hash::make($data['password']),
+            'role_id' => $role->id,
+            'is_suspend' => 0,
+            'last_login' => Carbon::now(),
+          ]);
+
+          DB::commit();
+          return $this->created(['pengunjung' => $existingPengunjung]);
+        }
+      }
+
       if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
         $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
       }
 
       $facialData = FacialData::create($data['facial_data']);
-
-
       $data['pengunjung']['face_id'] = $facialData->id;
       unset($data['pengunjung']['password']);
       $pengunjung = Pengunjung::create($data['pengunjung']);
-
 
       $role = Role::where('nama_role', 'users')->first();
       if (!$role) {
@@ -58,7 +82,6 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       ]);
 
       DB::commit();
-
       return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
     } catch (\Exception $e) {
       Log::info('Facial Data:', $data['facial_data']);
@@ -66,6 +89,28 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
     }
   }
+
+  public function createPengunjungWithoutUser(array $data)
+  {
+    DB::beginTransaction();
+    try {
+      if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+        $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+      }
+      $facialData = FacialData::create($data['facial_data']);
+
+
+      $data['pengunjung']['face_id'] = $facialData->id;
+      $pengunjung = Pengunjung::create($data['pengunjung']);
+
+      DB::commit();
+      return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      throw new \Exception('Terjadi kesalahan: ' . $e->getMessage());
+    }
+  }
+
 
 
 
@@ -103,11 +148,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
 
   public function checkNik($nik)
   {
-    // Cek apakah nik ada di tabel pengunjung
     $pengunjung = Pengunjung::where('nik', $nik)->first();
 
     if ($pengunjung) {
-      // Cek apakah pengunjung_id ada di tabel UserPengunjung
       $userPengunjung = UserPengunjung::where('pengunjung_id', $pengunjung->id)->first();
 
       return [

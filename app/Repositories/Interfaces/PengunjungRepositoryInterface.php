@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 interface PengunjungRepositoryInterface
 {
   public function create(array $data);
+  public function createPengunjungWithoutUser(array $data);
   public function get(Request $request);
   public function getById(string $id): ?Pengunjung;
   public function update(string $id, array $data);

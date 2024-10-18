@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 
 
-class PengunjungRequest
+class PengunjungWithoutUserRequest
 {
   public function validate(Request $request)
   {
@@ -17,7 +17,7 @@ class PengunjungRequest
         'required',
         'string',
         'max:100',
-        // Hapus rule unique untuk nik agar validasi terjadi di repository
+        'unique:pengunjung,nik'
       ],
       'jenis_kelamin' => 'string|max:100',
       'nama_pengunjung' => 'string|max:100',
@@ -26,7 +26,6 @@ class PengunjungRequest
       'phone' => 'required|string|max:100',
       'palm_data_id' => 'string|max:36',
       'face_id' => 'string|max:36',
-      'password' => 'required|string|min:6',
     ];
 
     $validator = \Validator::make($request->all(), $rules);

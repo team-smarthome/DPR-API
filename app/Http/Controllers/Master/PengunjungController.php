@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Master\FacialDataRequest;
 use App\Http\Requests\Master\PengunjungRequest;
+use App\Http\Requests\Master\PengunjungWithoutUserRequest;
 use App\Models\Pengunjung;
 use App\Repositories\Interfaces\PengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
@@ -41,18 +42,33 @@ class PengunjungController extends Controller
 
       $pengunjungData = $pengunjungRequest->validate($request);
       $facialData = $facialDataRequest->validate($request);
-
-      // Tambahkan password ke payload
       return $this->pengunjungRepositoryInterface->create([
         'pengunjung' => $pengunjungData,
         'facial_data' => $facialData,
-        'password' => $request->input('password'), // Ambil password dari request
+        'password' => $request->input('password'),
       ]);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
   }
 
+  public function createPengunjungWithoutUser(Request $request)
+  {
+    try {
+      $pengunjungRequest = new PengunjungWithoutUserRequest();
+      $facialDataRequest = new FacialDataRequest();
+
+      $pengunjungData = $pengunjungRequest->validate($request);
+      $facialData = $facialDataRequest->validate($request);
+
+      return $this->pengunjungRepositoryInterface->createPengunjungWithoutUser([
+        'pengunjung' => $pengunjungData,
+        'facial_data' => $facialData,
+      ]);
+    } catch (ValidationException $e) {
+      return $this->alreadyExist($e->getMessage());
+    }
+  }
 
   public function update(Request $request, $id)
   {
@@ -60,11 +76,10 @@ class PengunjungController extends Controller
       $pengunjungRequest = new PengunjungRequest();
       $data = $pengunjungRequest->validate($request);
 
-      // Validasi data facial jika ada
+
       $facialDataRequest = new FacialDataRequest();
       $facialData = $facialDataRequest->validate($request);
 
-      // Gabungkan data pengunjung dan facial
       $combinedData = [
         'pengunjung' => $data,
         'facial_data' => $facialData
@@ -76,17 +91,7 @@ class PengunjungController extends Controller
     }
   }
 
-  // public function update(Request $request, $id)
-  // {
-  //   try {
-  //     $pengunjungRequest = new PengunjungRequest();
-  //     $data = $pengunjungRequest->validate($request);
 
-  //     return $this->pengunjungRepositoryInterface->update($id, $data);
-  //   } catch (ValidationException $e) {
-  //     return $this->alreadyExist($e->getMessage());
-  //   }
-  // }
 
   public function checkNik(Request $request)
   {
@@ -110,13 +115,13 @@ class PengunjungController extends Controller
     if ($result['exists_in_user_pengunjung']) {
       return response()->json([
         'status' => 200,
-        'message' => 'NIK exists in both Pengunjung and UserPengunjung tables',
+        'message' => 'NIK exists in both Pengunjung and user_pengunjung table',
         'pengunjung' => $result['pengunjung']
       ], 200);
     } else {
       return response()->json([
         'status' => 422,
-        'message' => 'NIK exists in Pengunjung table but not in UserPengunjung table',
+        'message' => 'NIK exists in Pengunjung table but not in user_pengunjung table',
         'pengunjung' => $result['pengunjung']
       ], 422);
     }
