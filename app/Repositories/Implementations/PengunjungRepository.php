@@ -101,6 +101,29 @@ class PengunjungRepository implements PengunjungRepositoryInterface
     }
   }
 
+  public function checkNik($nik)
+  {
+    // Cek apakah nik ada di tabel pengunjung
+    $pengunjung = Pengunjung::where('nik', $nik)->first();
+
+    if ($pengunjung) {
+      // Cek apakah pengunjung_id ada di tabel UserPengunjung
+      $userPengunjung = UserPengunjung::where('pengunjung_id', $pengunjung->id)->first();
+
+      return [
+        'exists_in_pengunjung' => true,
+        'pengunjung' => $pengunjung,
+        'exists_in_user_pengunjung' => $userPengunjung ? true : false,
+      ];
+    } else {
+      return [
+        'exists_in_pengunjung' => false,
+        'pengunjung' => null,
+        'exists_in_user_pengunjung' => false,
+      ];
+    }
+  }
+
   public function getById(string $id): ?Pengunjung
   {
     return Pengunjung::find($id);

@@ -88,6 +88,41 @@ class PengunjungController extends Controller
   //   }
   // }
 
+  public function checkNik(Request $request)
+  {
+    $nik = $request->query('nik');
+
+    if (!$nik) {
+      return response()->json([
+        'message' => 'NIK is required'
+      ], 400);
+    }
+
+    $result = $this->pengunjungRepositoryInterface->checkNik($nik);
+
+    if (!$result['exists_in_pengunjung']) {
+      return response()->json([
+        'status' => 404,
+        'message' => 'NIK does not exist in Pengunjung table'
+      ], 404);
+    }
+
+    if ($result['exists_in_user_pengunjung']) {
+      return response()->json([
+        'status' => 200,
+        'message' => 'NIK exists in both Pengunjung and UserPengunjung tables',
+        'pengunjung' => $result['pengunjung']
+      ], 200);
+    } else {
+      return response()->json([
+        'status' => 422,
+        'message' => 'NIK exists in Pengunjung table but not in UserPengunjung table',
+        'pengunjung' => $result['pengunjung']
+      ], 422);
+    }
+  }
+
+
   public function delete($id)
   {
     return $this->pengunjungRepositoryInterface->delete($id);

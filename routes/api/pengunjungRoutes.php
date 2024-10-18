@@ -7,6 +7,7 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 });
 
 $router->group(['prefix' => 'master'], function () use ($router) {
+  $router->get('/pengunjung/check-nik', 'Master\PengunjungController@checkNik');
   $router->get('/pengunjung', 'Master\PengunjungController@index');
   $router->put('/pengunjung/{id}', 'Master\PengunjungController@update');
   $router->delete('/pengunjung/{id}', 'Master\PengunjungController@delete');

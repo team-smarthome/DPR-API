@@ -12,4 +12,5 @@ interface PengunjungRepositoryInterface
   public function getById(string $id): ?Pengunjung;
   public function update(string $id, array $data);
   public function delete(string $id);
+  public function checkNik(string $nik);
 }
