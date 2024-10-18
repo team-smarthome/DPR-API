@@ -45,6 +45,8 @@ use App\Repositories\Implementations\GrupVehiclePegawaiRepository;
 use App\Repositories\Implementations\UserRepository;
 use App\Repositories\Interfaces\GrupVehiclePegawaiRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
+use App\Repositories\Interfaces\UserRoleRepositoryInterface;
+use App\Repositories\Implementations\UserRoleRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -76,5 +78,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(RentSmartLockerRepositoryInterface::class, RentSmartLockerRepository::class);
     $this->app->bind(AuthPengunjungRepositoryInterface::class, AuthPengunjungRepository::class);
     $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(UserRoleRepositoryInterface::class, UserRoleRepository::class);
   }
 }
