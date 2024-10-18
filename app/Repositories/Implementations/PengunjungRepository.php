@@ -106,8 +106,14 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       DB::commit();
       return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
     } catch (\Exception $e) {
+      // DB::rollBack();
+      // throw new \Exception('Terjadi kesalahan: ' . $e->getMessage());
       DB::rollBack();
-      throw new \Exception('Terjadi kesalahan: ' . $e->getMessage());
+
+      return response()->json([
+        'message' => 'Terjadi kesalahan saat membuat pengunjung.',
+        'error' => $e->getMessage()
+      ], 500);
     }
   }
 
