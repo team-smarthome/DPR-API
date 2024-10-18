@@ -17,7 +17,7 @@ class PengunjungWithoutUserRequest
         'required',
         'string',
         'max:100',
-        'unique:pengunjung,nik'
+        Rule::unique('pengunjung', 'nik')
       ],
       'jenis_kelamin' => 'string|max:100',
       'nama_pengunjung' => 'string|max:100',
@@ -37,3 +37,36 @@ class PengunjungWithoutUserRequest
     return $validator->validated();
   }
 }
+
+
+// class PengunjungRequest
+// {
+//   public function validate(Request $request)
+//   {
+//     $rules = [
+//       'nik' => [
+//         'required',
+//         'string',
+//         'max:100',
+//         Rule::unique('pengunjung', 'nik')
+//       ],
+//       'jenis_kelamin' => 'string|max:100',
+//       'nama_pengunjung' => 'string|max:100',
+//       'is_active' => 'integer|in:0,1',
+//       'email' => 'string|max:100',
+//       'phone' => 'required|string|max:100',
+//       'palm_data_id' => 'string|max:36',
+//       'face_id' => 'string|max:36',
+//       'password' => 'required|string|min:6',
+//     ];
+
+
+//     $validator = \Validator::make($request->all(), $rules);
+
+//     if ($validator->fails()) {
+//       throw new ValidationException($validator);
+//     }
+
+//     return $validator->validated();
+//   }
+// }
