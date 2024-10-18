@@ -106,13 +106,25 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       DB::commit();
       return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
     } catch (\Exception $e) {
-      // DB::rollBack();
-      // throw new \Exception('Terjadi kesalahan: ' . $e->getMessage());
       DB::rollBack();
 
+      // Logging detail error
+      Log::error('Error saat membuat pengunjung:', [
+        'error_message' => $e->getMessage(),
+        'data' => $data, // Anda bisa juga menyertakan data yang menyebabkan kesalahan
+        'line' => $e->getLine(), // Menyertakan nomor baris
+        'file' => $e->getFile()  // Menyertakan file tempat error terjadi
+      ]);
+
+      // Mengembalikan response dengan pesan kesalahan lebih detail
       return response()->json([
         'message' => 'Terjadi kesalahan saat membuat pengunjung.',
-        'error' => $e->getMessage()
+        'error' => [
+          'message' => $e->getMessage(),
+          'line' => $e->getLine(),
+          'file' => $e->getFile(),
+          'stack_trace' => $e->getTraceAsString(), // Menyertakan stack trace jika perlu
+        ]
       ], 500);
     }
   }
