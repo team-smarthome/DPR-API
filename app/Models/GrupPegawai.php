@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GrupPegawai extends Model
 {
@@ -28,7 +29,7 @@ class GrupPegawai extends Model
 
     public function pegawai()
     {
-        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id');
+       return $this->hasMany(Pegawai::class, 'grup_pegawai_id', 'id');
     }
 
 }
