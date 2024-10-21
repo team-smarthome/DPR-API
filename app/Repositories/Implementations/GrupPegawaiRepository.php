@@ -3,33 +3,53 @@
 namespace App\Repositories\Implementations;
 
 use App\Http\Resources\Master\GrupPegawaiResource;
+use App\Http\Resources\Master\GrupKunjunganResponseResource;
 use App\Models\GrupPegawai;
+use App\Models\Pegawai; 
 use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Dotenv\Exception\ValidationException;
+use Illuminate\Support\Facades\DB;
 use ErrorException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
 {   
     use ResponseTrait;
     public function create(array $data)
     {
-        $existingGrupPegawai = GrupPegawai::where('nama_grup_pegawai', $data['nama_grup_pegawai'])->first();
-
-        if ($existingGrupPegawai) {
-            return $this->alreadyExist('Grup Pegawai Already Exist');
+        DB::beginTransaction();
+        try {
+            $existingGrupPegawai = GrupPegawai::where('nama_grup_pegawai', $data['nama_grup_pegawai'])->first();
+            if ($existingGrupPegawai) {
+                return $this->alreadyExist('Grup Pegawai Already Exist');
+            }
+            $grupPegawai = GrupPegawai::create($data);
+            if (isset($data['ketua_grup'])) {
+                $pegawai = Pegawai::find($data['ketua_grup']);
+                if ($pegawai) {
+                    $pegawai->update([
+                        'grup_pegawai_id' => $grupPegawai->id
+                    ]);
+                } else {
+                    throw new Exception('Pegawai not found');
+                }
+            }
+            DB::commit();
+            return $this->created();
+        } catch(Exception $e) {
+            DB::rollBack();
+            return $this->error($e->getMessage(), 500);
         }
-
-        return $this->created(GrupPegawai::create($data));
     }
 
     public function get(Request $request)
     {
         try {
-            $collection = GrupPegawai::latest();
+            $collection = GrupPegawai::with('pegawai')->latest(); 
             $keyword = $request->query("search");
             $isNotPaginate = $request->query("not-paginate");
 
@@ -38,11 +58,12 @@ class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
             }
 
             if ($isNotPaginate) {
-                $collection = $collection->get();
+                $collection = GrupPegawai::latest()->get();
                 $result = GrupPegawaiResource::collection($collection)->response()->getData(true);
                 return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             } else {
-                return $this->paginate($collection, null, 'Successfully get Data');
+                $result = GrupKunjunganResponseResource::collection($collection->paginate($request->query('per_page', self::$defaultPagination)))->response()->getData(true);
+                return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             }
         } catch (ValidationException $e) {
             return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
