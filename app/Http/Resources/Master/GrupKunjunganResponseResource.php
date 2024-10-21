@@ -12,6 +12,7 @@ class GrupKunjunganResponseResource extends JsonResource
     return [
       'id' => $this->id,
       'ketua_grup' => $this->ketua_grup ?? null,
+      'nama_ketua_grup' => $this->ketuaGrup->nama_pegawai ?? null,
       'nama_grup_pegawai' => $this->nama_grup_pegawai ?? null,
       'pegawai' => PegawaiResource::collection($this->pegawai) ?? [],
       'created_at' => $this->created_at ? Carbon::parse($this->created_at)->format('Y-m-d H:i:s') : null,
