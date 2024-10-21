@@ -1,0 +1,8 @@
+<?php
+
+$router->group(['prefix' => 'master'], function () use ($router) {
+  $router->group(['middleware' => 'auth:users'], function () use ($router) {
+    $router->get('/user-pengunjung', 'Master\UserPengunjungController@index');
+    $router->delete('/user-pengunjung/{id}', 'Master\UserPengunjungController@destroy');
+  });
+});

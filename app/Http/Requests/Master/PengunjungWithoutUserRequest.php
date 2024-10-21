@@ -17,7 +17,6 @@ class PengunjungWithoutUserRequest
         'required',
         'string',
         'max:100',
-        Rule::unique('pengunjung', 'nik')
       ],
       'jenis_kelamin' => 'string|max:100',
       'nama_pengunjung' => 'string|max:100',
