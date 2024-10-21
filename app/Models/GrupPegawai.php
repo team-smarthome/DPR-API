@@ -32,4 +32,9 @@ class GrupPegawai extends Model
        return $this->hasMany(Pegawai::class, 'grup_pegawai_id', 'id');
     }
 
+    public function ketuaGrup()
+    {
+        return $this->belongsTo(Pegawai::class, 'ketua_grup');
+    }
+
 }
