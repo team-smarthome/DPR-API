@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\UserPengunjungRequest;
 use App\Models\UserPengunjung;
 use App\Repositories\Interfaces\UserPengunjungRepositoryInterface;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserPengunjungController extends Controller
 {
@@ -30,7 +32,13 @@ class UserPengunjungController extends Controller
 
   public function store(Request $request)
   {
-    return UserPengunjung::create($request->all());
+    try {
+      $userPengunjungRequest = new UserPengunjungRequest();
+      $data = $userPengunjungRequest->validate($request);
+      return $this->userPengunjungRepositoryInterface->create($data);
+    } catch (ValidationException $e) {
+      return $this->alreadyExist('User Role Already Exist');
+    }
   }
 
   public function update(Request $request, $id)

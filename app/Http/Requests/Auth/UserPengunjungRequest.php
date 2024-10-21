@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
@@ -26,6 +27,11 @@ class UserPengunjungRequest
       throw new ValidationException($validator);
     }
 
-    return $validator->validated();
+    $validated = $validator->validated();
+
+    // Hash the password
+    $validated['password'] = Hash::make($validated['password']);
+
+    return $validated;
   }
 }
