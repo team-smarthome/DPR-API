@@ -3,6 +3,7 @@
 namespace App\Repositories\Implementations;
 
 use App\Http\Resources\Master\GrupPegawaiResource;
+use App\Http\Resources\Master\GrupKunjunganResponseResource;
 use App\Models\GrupPegawai;
 use App\Models\Pegawai; 
 use App\Repositories\Interfaces\GrupPegawaiRepositoryInterface;
@@ -13,6 +14,7 @@ use ErrorException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
 {   
@@ -60,7 +62,8 @@ class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
                 $result = GrupPegawaiResource::collection($collection)->response()->getData(true);
                 return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             } else {
-                return $this->paginate($collection, null, 'Successfully get Data');
+                $result = GrupKunjunganResponseResource::collection($collection->paginate($request->query('per_page', self::$defaultPagination)))->response()->getData(true);
+                return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
             }
         } catch (ValidationException $e) {
             return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
