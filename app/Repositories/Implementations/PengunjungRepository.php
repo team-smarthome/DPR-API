@@ -94,6 +94,13 @@ class PengunjungRepository implements PengunjungRepositoryInterface
   {
     DB::beginTransaction();
     try {
+
+      $existingPengunjung = Pengunjung::where('nik', $data['pengunjung']['nik'])->first();
+
+      if ($existingPengunjung) {
+        DB::rollBack();
+        return $this->wrapResponse(Response::HTTP_CONFLICT, 'Data already exists in pengunjung table');
+      }
       if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
         $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
       }
@@ -107,25 +114,9 @@ class PengunjungRepository implements PengunjungRepositoryInterface
       return $this->created(['pengunjung' => $pengunjung, 'facial_data' => $facialData]);
     } catch (\Exception $e) {
       DB::rollBack();
-
-      // Logging detail error
-      Log::error('Error saat membuat pengunjung:', [
-        'error_message' => $e->getMessage(),
-        'data' => $data, // Anda bisa juga menyertakan data yang menyebabkan kesalahan
-        'line' => $e->getLine(), // Menyertakan nomor baris
-        'file' => $e->getFile()  // Menyertakan file tempat error terjadi
-      ]);
-
-      // Mengembalikan response dengan pesan kesalahan lebih detail
-      return response()->json([
-        'message' => 'Terjadi kesalahan saat membuat pengunjung.',
-        'error' => [
-          'message' => $e->getMessage(),
-          'line' => $e->getLine(),
-          'file' => $e->getFile(),
-          'stack_trace' => $e->getTraceAsString(), // Menyertakan stack trace jika perlu
-        ]
-      ], 500);
+      Log::info('Facial Data:', $data['facial_data']);
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
     }
   }
 
