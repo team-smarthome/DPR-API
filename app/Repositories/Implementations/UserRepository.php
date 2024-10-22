@@ -3,12 +3,14 @@
 namespace App\Repositories\Implementations;
 
 use App\Http\Resources\Master\UserResource;
+use App\Models\Pengunjung;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Traits\ResponseTrait;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
@@ -76,5 +78,18 @@ class UserRepository implements UserRepositoryInterface
     $user->role_id = $roleId;
     $user->save();
     return $this->wrapResponse(200, 'User role updated successfully');
+  }
+
+  public function resetPassword(string $id)
+  {
+    $model = User::find($id);
+    if (!$model) {
+      return $this->notFound();
+    }
+
+    $model->password = Hash::make('password123');
+    $model->save();
+
+    return $this->wrapResponse(Response::HTTP_OK, 'Password has been reset successfully.');
   }
 }
