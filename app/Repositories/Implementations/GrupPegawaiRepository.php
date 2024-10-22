@@ -28,6 +28,11 @@ class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
                 return $this->alreadyExist('Grup Pegawai Already Exist');
             }
             $grupPegawai = GrupPegawai::create($data);
+
+            if (isset($data['pegawai'])) {
+                    Pegawai::whereIn('id', $data['pegawai'])->update(['grup_pegawai_id' => $grupPegawai->id]);
+            }
+            
             if (isset($data['ketua_grup'])) {
                 $pegawai = Pegawai::find($data['ketua_grup']);
                 if ($pegawai) {
@@ -38,6 +43,7 @@ class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
                     throw new Exception('Pegawai not found');
                 }
             }
+
             DB::commit();
             return $this->created();
         } catch(Exception $e) {

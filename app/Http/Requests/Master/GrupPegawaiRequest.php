@@ -27,6 +27,7 @@ class GrupPegawaiRequest
         'regex:/^[a-zA-Z\s]*$/'
       ],
       'ketua_grup' => 'required|string|max:100',
+      'pegawai.*' => 'nullable|exists:pegawai,id',
     ];
 
     $messages = [
