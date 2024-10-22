@@ -51,4 +51,8 @@ class UserController extends Controller
     $roleId = $request->input('roleId');
     return $this->usersRepositoryInterface->updateRoleId($roleId, $id);
   }
+  public function resetPassword($id)
+  {
+    return $this->usersRepositoryInterface->resetPassword($id);
+  }
 }

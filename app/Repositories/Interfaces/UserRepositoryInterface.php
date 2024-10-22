@@ -13,4 +13,5 @@ interface UserRepositoryInterface
   public function update(string $id, array $data);
   public function delete(string $id);
   public function updateRoleId($roleId, string $id);
+  public function resetPassword(string $id);
 }
