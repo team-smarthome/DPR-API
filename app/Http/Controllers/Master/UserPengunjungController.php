@@ -52,4 +52,9 @@ class UserPengunjungController extends Controller
   {
     return $this->userPengunjungRepositoryInterface->delete($id);
   }
+
+  public function resetPassword($id)
+  {
+    return $this->userPengunjungRepositoryInterface->resetPassword($id);
+  }
 }

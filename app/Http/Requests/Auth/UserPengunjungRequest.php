@@ -11,6 +11,7 @@ class UserPengunjungRequest
 {
   public function validate(Request $request)
   {
+
     $rules = [
       'pengunjung_id' => 'required|string|uuid|max:36',
       'username' => 'required|string|max:100',
@@ -21,6 +22,9 @@ class UserPengunjungRequest
       'last_login' => 'sometimes|date',
     ];
 
+    $request->merge([
+      'role_id' => $request->input('roleId'),
+    ]);
     $validator = \Validator::make($request->all(), $rules);
 
     if ($validator->fails()) {

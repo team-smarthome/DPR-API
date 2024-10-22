@@ -9,21 +9,51 @@ use App\Traits\ResponseTrait;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
 
 class UserPengunjungRepository implements UserPengunjungRepositoryInterface
 {
   use ResponseTrait;
+  // public function create(array $data)
+  // {
+  //   $existingLokasi = UserPengunjung::where('username', $data['username'])->first();
+
+  //   if ($existingLokasi) {
+  //     return $this->alreadyExist('Username Already Exist');
+  //   }
+
+  //   return $this->created(UserPengunjung::create($data));
+  // }
+
   public function create(array $data)
   {
-    $existingLokasi = UserPengunjung::where('username', $data['username'])->first();
+    DB::beginTransaction();
 
-    if ($existingLokasi) {
-      return $this->alreadyExist('Username Already Exist');
+    try {
+      $existingUser = UserPengunjung::where('username', $data['username'])->first();
+
+      if ($existingUser) {
+        DB::rollBack();
+        return $this->alreadyExist('Username Already Exist');
+      }
+
+      // Buat data baru di UserPengunjung
+      $userPengunjung = UserPengunjung::create($data);
+
+      // Update is_active di tabel Pengunjung
+      DB::table('pengunjung')
+        ->where('id', $data['pengunjung_id'])
+        ->update(['is_active' => 1]);
+
+      DB::commit();
+      return $this->created($userPengunjung);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data.');
     }
-
-    return $this->created(UserPengunjung::create($data));
   }
 
   public function get(Request $request)
@@ -85,5 +115,17 @@ class UserPengunjungRepository implements UserPengunjungRepositoryInterface
       $model->delete();
       return $this->deleted();
     }
+  }
+  public function resetPassword(string $id)
+  {
+    $model = UserPengunjung::find($id);
+    if (!$model) {
+      return $this->notFound();
+    }
+
+    $model->password = Hash::make('password123');
+    $model->save();
+
+    return $this->wrapResponse(Response::HTTP_OK, 'Password has been reset successfully.');
   }
 }
