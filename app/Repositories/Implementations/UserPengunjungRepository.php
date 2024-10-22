@@ -17,16 +17,7 @@ use Illuminate\Support\Str;
 class UserPengunjungRepository implements UserPengunjungRepositoryInterface
 {
   use ResponseTrait;
-  // public function create(array $data)
-  // {
-  //   $existingLokasi = UserPengunjung::where('username', $data['username'])->first();
 
-  //   if ($existingLokasi) {
-  //     return $this->alreadyExist('Username Already Exist');
-  //   }
-
-  //   return $this->created(UserPengunjung::create($data));
-  // }
 
   public function create(array $data)
   {
