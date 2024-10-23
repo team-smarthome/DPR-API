@@ -10,6 +10,7 @@ use App\Traits\ResponseTrait;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
@@ -19,7 +20,25 @@ class UserRepository implements UserRepositoryInterface
   use ResponseTrait;
   public function create(array $data)
   {
-    return User::create($data);
+    DB::beginTransaction();
+    try {
+      $existingUser = User::where('username', $data['username'])->first();
+      if ($existingUser) {
+        DB::rollBack();
+        return $this->alreadyExist('Username Already Exist');
+      }
+      $user = User::create($data);
+
+      DB::table('pegawai')
+        ->where('id', $data['pegawai_id'])
+        ->update(['is_active' => 1]);
+
+      DB::commit();
+      return $this->created($user);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data.');
+    }
   }
 
   public function get(Request $request)
@@ -59,10 +78,17 @@ class UserRepository implements UserRepositoryInterface
     return null;
   }
 
-  public function delete(string $id): bool
+  public function delete(string $id)
   {
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
+    }
     $model = User::find($id);
-    return $model ? $model->delete() : false;
+    if (!$model) {
+      return $this->notFound();
+    }
+    $model->delete();
+    return $this->deleted();
   }
 
   public function updateRoleId($roleId, string $id)
