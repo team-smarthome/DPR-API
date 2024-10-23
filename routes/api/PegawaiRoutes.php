@@ -9,6 +9,7 @@ $router->group(['prefix' => 'master'], function () use ($router) {
     $router->get('/pegawai', 'Master\PegawaiController@index');
     $router->get('/getMe', 'Master\PegawaiController@getMe');
     $router->post('/pegawai/add-without-user', 'Master\PegawaiController@createPegawaiWithoutUser');
+    $router->post('/pegawai/check-credentials', 'Master\PegawaiController@checkCredentials');
   });
   // $router->group(['middleware' => 'auth:admin'], function () use ($router) {
   $router->put('/pegawai/{id}', 'Master\PegawaiController@update');

@@ -109,6 +109,7 @@ class AuthController extends Controller
       'exp' => time() + 60 * 60,
       'role_id' => $user->role_id,
       'nama_role' => $user->role->nama_role,
+      'username' => $user->username
     ];
 
     return JWT::encode($payload, $this->jwtSecret, 'HS256');
@@ -164,82 +165,82 @@ class AuthController extends Controller
 
   public function loginMobile(Request $request)
   {
-      $loginRequest = new LoginRequest();
+    $loginRequest = new LoginRequest();
 
-      try {
-          $validatedData = $loginRequest->validate($request);
-          $user = User::with('role')->where('username', $validatedData['username'])->first();
+    try {
+      $validatedData = $loginRequest->validate($request);
+      $user = User::with('role')->where('username', $validatedData['username'])->first();
 
-          if (!$user || !Hash::check($validatedData['password'], $user->password)) {
-              return response()->json([
-                  'status' => 401,
-                  'message' => 'Unauthorized'
-              ], 401);
-          }
-          $pegawai = Pegawai::where('id', $user->pegawai_id)->first();
-
-          if ($pegawai->is_active == 0) {
-              return response()->json([
-                  'status' => 401,
-                  'message' => 'Unauthorized. User is inactive.'
-              ], 401);
-          } elseif ($pegawai->is_active == 2) {
-              return response()->json([
-                  'status' => 401,
-                  'message' => 'Unauthorized. User is rejected.'
-              ], 401);
-          }
-
-          if ($user->is_suspend == 1) {
-              return response()->json([
-                  'status' => 401,
-                  'message' => 'Unauthorized. User is suspended.'
-              ], 401);
-          }
-
-          $token = $this->generateJwtUnlimited($user);
-
-          DB::transaction(function () use ($user, $token) {
-              UserLogin::create([
-                  'user_id' => $user->id,
-                  'token' => $token,
-                  'token_expired' => null,
-              ]);
-
-              UserLog::create([
-                  'id' => \Illuminate\Support\Str::uuid(),
-                  'user_id' => $user->id,
-                  'nama_user_log' => 'Login Mobile',
-              ]);
-          });
-
-          return response()->json([
-              'status' => 200,
-              'token' => $token
-          ], 200);
-      } catch (ValidationException $e) {
-          return response()->json([
-              'status' => 422,
-              'message' => $e->getMessage()
-          ], 422);
-      } catch (\Exception $e) {
-          return response()->json([
-              'status' => 500,
-              'message' => $e->getMessage()
-          ], 500);
+      if (!$user || !Hash::check($validatedData['password'], $user->password)) {
+        return response()->json([
+          'status' => 401,
+          'message' => 'Unauthorized'
+        ], 401);
       }
+      $pegawai = Pegawai::where('id', $user->pegawai_id)->first();
+
+      if ($pegawai->is_active == 0) {
+        return response()->json([
+          'status' => 401,
+          'message' => 'Unauthorized. User is inactive.'
+        ], 401);
+      } elseif ($pegawai->is_active == 2) {
+        return response()->json([
+          'status' => 401,
+          'message' => 'Unauthorized. User is rejected.'
+        ], 401);
+      }
+
+      if ($user->is_suspend == 1) {
+        return response()->json([
+          'status' => 401,
+          'message' => 'Unauthorized. User is suspended.'
+        ], 401);
+      }
+
+      $token = $this->generateJwtUnlimited($user);
+
+      DB::transaction(function () use ($user, $token) {
+        UserLogin::create([
+          'user_id' => $user->id,
+          'token' => $token,
+          'token_expired' => null,
+        ]);
+
+        UserLog::create([
+          'id' => \Illuminate\Support\Str::uuid(),
+          'user_id' => $user->id,
+          'nama_user_log' => 'Login Mobile',
+        ]);
+      });
+
+      return response()->json([
+        'status' => 200,
+        'token' => $token
+      ], 200);
+    } catch (ValidationException $e) {
+      return response()->json([
+        'status' => 422,
+        'message' => $e->getMessage()
+      ], 422);
+    } catch (\Exception $e) {
+      return response()->json([
+        'status' => 500,
+        'message' => $e->getMessage()
+      ], 500);
+    }
   }
 
   private function generateJwtUnlimited($user)
   {
-      $payload = [
-          'sub' => $user->id,
-          'pegawai_id' => $user->pegawai_id,
-          'iat' => time(),
-          'role_id' => $user->role_id,
-          'nama_role' => $user->role->nama_role,
-      ];
+    $payload = [
+      'sub' => $user->id,
+      'pegawai_id' => $user->pegawai_id,
+      'iat' => time(),
+      'role_id' => $user->role_id,
+      'nama_role' => $user->role->nama_role,
+    ];
 
-      return JWT::encode($payload, $this->jwtSecret, 'HS256');
+    return JWT::encode($payload, $this->jwtSecret, 'HS256');
   }
 }

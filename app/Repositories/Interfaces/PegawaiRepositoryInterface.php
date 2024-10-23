@@ -15,4 +15,5 @@ interface PegawaiRepositoryInterface
   public function delete(string $id);
   public function getMe(Request $request);
   public function updateIsActive(array $validatedData, string $id);
+  public function checkCredentials(array $credentials);
 }
