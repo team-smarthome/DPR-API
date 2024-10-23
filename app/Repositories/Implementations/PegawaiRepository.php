@@ -15,6 +15,7 @@ use App\Models\Role;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repositories\Interfaces\PegawaiRepositoryInterface;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -24,6 +25,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
 
   public function create(array $data)
   {
+
     try {
       DB::beginTransaction();
 
@@ -31,7 +33,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
       if ($existingNip) {
         DB::rollBack();
-        return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
+        return $this->wrapResponse(Response::HTTP_CONFLICT, 'NIP already exists');
       }
 
       if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
@@ -46,9 +48,9 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $pegawai = Pegawai::create($pegawaiData);
 
       //** UserData **//
-      // $role = Role::where('nama_role', 'users')->first();
-      // $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
-      // $user = User::create($userData);
+      $role = Role::where('nama_role', 'users')->first();
+      $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
+      $user = User::create($userData);
 
       DB::commit();
       return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
@@ -67,7 +69,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
       if ($existingNip) {
         DB::rollBack();
-        return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
+        return $this->wrapResponse(Response::HTTP_CONFLICT, 'NIP already exists');
       }
 
       if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
@@ -81,13 +83,9 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
       $pegawai = Pegawai::create($pegawaiData);
 
-      //** UserData **//
-      // $role = Role::where('nama_role', 'users')->first();
-      // $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
-      // $user = User::create($userData);
 
       DB::commit();
-      return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
+      return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai]);
     } catch (\Throwable $th) {
       return $th;
     }
@@ -209,5 +207,19 @@ class PegawaiRepository implements PegawaiRepositoryInterface
     $user->save();
 
     return $this->wrapResponse(200, 'Pegawai updated successfully');
+  }
+  public function checkCredentials(array $credentials)
+  {
+    try {
+      $user = User::where('username', $credentials['username'])->first();
+
+      if ($user && Hash::check($credentials['password'], $user->password)) {
+        return $this->wrapResponse(Response::HTTP_OK, 'Credentials are valid', ['user_id' => $user->id]);
+      }
+
+      return $this->wrapResponse(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
+    } catch (\Exception $e) {
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, $e->getMessage());
+    }
   }
 }

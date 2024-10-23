@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\UpdateIsActivePegawaiRequest;
+use App\Http\Requests\Master\CheckCredentialPegawaiRequest;
 use App\Http\Requests\Master\FacialDataRequest;
 use App\Http\Requests\Master\PegawaiRequest;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +56,7 @@ class PegawaiController extends Controller
       $facialRequest = new FacialDataRequest();
       $pegawaiRequest = new PegawaiRequest();
 
-      return $this->pegawaiRepositoryInterface->create(
+      return $this->pegawaiRepositoryInterface->createPegawaiWithoutUser(
         [
           'facial_data' => $facialRequest->validate($request),
           'pegawai' =>  $pegawaiRequest->validate($request),
@@ -105,5 +106,13 @@ class PegawaiController extends Controller
     $validatedData = $updateIsActiveRequest->validate($request);
 
     return $this->pegawaiRepositoryInterface->updateIsActive($validatedData, $id);
+  }
+
+  public function checkCredentials(Request $request)
+  {
+
+    $credentialsRequest = new CheckCredentialPegawaiRequest();
+    $validated = $credentialsRequest->validate($request);
+    return $this->pegawaiRepositoryInterface->checkCredentials($validated);
   }
 }

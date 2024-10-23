@@ -13,7 +13,9 @@ class PegawaiRequest
   {
 
     $rules = [
-      'nip' => 'string|max:100',
+      'nip' =>  'required',
+      'string',
+      'max:100',
       'nama_pegawai' => 'string|max:100',
       'jenis_kelamin' => 'string|max:100',
       'is_active' => ['integer', Rule::in([0, 1, 2])],
