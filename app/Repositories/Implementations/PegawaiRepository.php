@@ -46,9 +46,45 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $pegawai = Pegawai::create($pegawaiData);
 
       //** UserData **//
-      $role = Role::where('nama_role', 'users')->first();
-      $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
-      $user = User::create($userData);
+      // $role = Role::where('nama_role', 'users')->first();
+      // $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
+      // $user = User::create($userData);
+
+      DB::commit();
+      return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $e->getMessage());
+    }
+  }
+
+  public function createPegawaiWithoutUser(array $data)
+  {
+    try {
+      DB::beginTransaction();
+
+      // ** Check NIP ** //
+      $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
+      if ($existingNip) {
+        DB::rollBack();
+        return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'NIP already exists');
+      }
+
+      if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
+        $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
+      }
+
+      //** FacialData **//
+      $facial = FacialData::create($data['facial_data']);
+
+      //** PegawaiData **//
+      $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
+      $pegawai = Pegawai::create($pegawaiData);
+
+      //** UserData **//
+      // $role = Role::where('nama_role', 'users')->first();
+      // $userData = array_merge($data['user'], ['pegawai_id' => $pegawai->id, 'username' => $pegawai->nip, 'role_id' => $role->id]);
+      // $user = User::create($userData);
 
       DB::commit();
       return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai, 'user' => $user]);
@@ -91,33 +127,33 @@ class PegawaiRepository implements PegawaiRepositoryInterface
 
   public function update(string $id, array $data)
   {
-      if (!Str::isUuid($id)) {
-          return $this->invalidUUid();
+    if (!Str::isUuid($id)) {
+      return $this->invalidUUid();
+    }
+
+    $model = Pegawai::find($id);
+    if (!$model) {
+      return $this->notFound();
+    }
+
+    DB::beginTransaction();
+
+    try {
+      $model->update($data);
+      if (isset($data['role_id'])) {
+        $user = User::where('pegawai_id', $id)->first();
+        if ($user) {
+          $user->role_id = $data['role_id'];
+          $user->save();
+        }
       }
+      DB::commit();
 
-      $model = Pegawai::find($id);
-      if (!$model) {
-          return $this->notFound();
-      }
-
-      DB::beginTransaction();
-
-      try {
-          $model->update($data);
-          if (isset($data['role_id'])) {
-              $user = User::where('pegawai_id', $id)->first();
-              if ($user) {
-                  $user->role_id = $data['role_id'];
-                  $user->save();
-              }
-          }
-          DB::commit();
-
-          return $this->updated();
-      } catch (\Exception $e) {
-          DB::rollBack();
-          return $this->error($e->getMessage());
-      }
+      return $this->updated();
+    } catch (\Exception $e) {
+      DB::rollBack();
+      return $this->error($e->getMessage());
+    }
   }
 
   public function delete(string $id)

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 interface PegawaiRepositoryInterface
 {
   public function create(array $data);
+  public function createPegawaiWithoutUser(array $data);
   public function get(Request $request);
   public function getById(string $id);
   public function update(string $id, array $data);

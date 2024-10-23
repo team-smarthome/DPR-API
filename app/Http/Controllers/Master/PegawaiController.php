@@ -49,6 +49,23 @@ class PegawaiController extends Controller
     }
   }
 
+  public function createPegawaiWithoutUser(Request $request)
+  {
+    try {
+      $facialRequest = new FacialDataRequest();
+      $pegawaiRequest = new PegawaiRequest();
+
+      return $this->pegawaiRepositoryInterface->create(
+        [
+          'facial_data' => $facialRequest->validate($request),
+          'pegawai' =>  $pegawaiRequest->validate($request),
+        ]
+      );
+    } catch (ValidationException $e) {
+      return $this->alreadyExist($e->getMessage());
+    }
+  }
+
   public function update(Request $request, $id)
   {
     try {
