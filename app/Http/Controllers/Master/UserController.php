@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Master\SetRoleRequest;
+use App\Http\Requests\Master\UserRequest;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Traits\ResponseTrait;
+use Illuminate\Console\PromptValidationException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -31,7 +33,13 @@ class UserController extends Controller
 
   public function store(Request $request)
   {
-    return User::create($request->all());
+    try {
+      $userRequest = new UserRequest();
+      $data = $userRequest->validate($request);
+      return $this->usersRepositoryInterface->create($data);
+    } catch (ValidationException $e) {
+      return $this->alreadyExist($e->getMessage());
+    }
   }
 
   public function update(Request $request, $id)
@@ -43,7 +51,7 @@ class UserController extends Controller
 
   public function destroy($id)
   {
-    return User::destroy($id);
+    return $this->usersRepositoryInterface->delete($id);
   }
 
   public function updateRoleId(Request $request, $id)
