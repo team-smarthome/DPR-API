@@ -13,15 +13,40 @@ use Illuminate\Validation\ValidationException;
 class DeviceRepository implements DeviceRepositoryInterface
 {
   use ResponseTrait;
+  // public function create(array $data)
+  // {
+  //   $existingDevice = Device::where('nama_device', $data['nama_device'])->first();
+
+  //   if ($existingDevice) {
+  //     return $this->alreadyExist('Device Already Exist');
+  //   }
+
+  //   return $this->created(Device::create($data));
+  // }
+
   public function create(array $data)
   {
-    $existingDevice = Device::where('nama_device', $data['nama_device'])->first();
+    $createdDevices = [];
 
-    if ($existingDevice) {
-      return $this->alreadyExist('Device Already Exist');
+    foreach ($data as $deviceData) {
+      // Check if the device with the same 'nama_device' already exists
+      $existingDevice = Device::where('nama_device', $deviceData['nama_device'])->first();
+
+      // If the device exists, skip this one
+      if ($existingDevice) {
+        continue;
+      }
+
+      // Create the device and store it in the $createdDevices array
+      $createdDevices[] = Device::create($deviceData);
     }
 
-    return $this->created(Device::create($data));
+    // Return the list of created devices
+    return [
+      'status' => 'success',
+      'message' => 'Devices created successfully',
+      'devices' => $createdDevices
+    ];
   }
 
   public function get(Request $request)

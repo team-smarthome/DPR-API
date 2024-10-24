@@ -10,7 +10,6 @@ class CheckCredentialPegawaiRequest
   public function validate(Request $request)
   {
     $rules = [
-      'user_id' => 'required|string|max:36',
       'username' => 'required|string',
       'password' => 'required|string',
     ];

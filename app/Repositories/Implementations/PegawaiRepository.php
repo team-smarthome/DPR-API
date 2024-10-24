@@ -214,7 +214,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $user = User::where('username', $credentials['username'])->first();
 
       if ($user && Hash::check($credentials['password'], $user->password)) {
-        return $this->wrapResponse(Response::HTTP_OK, 'Credentials are valid', ['user_id' => $user->id]);
+        return $this->wrapResponse2(Response::HTTP_OK, 'Credentials are valid', ['user_id' => $user->id]);
       }
 
       return $this->wrapResponse(Response::HTTP_UNAUTHORIZED, 'Invalid credentials');
