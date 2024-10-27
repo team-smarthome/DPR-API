@@ -4,19 +4,20 @@ namespace App\Http\Requests\Master;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
-
 
 class FacialDataRequest
 {
   public function validate(Request $request)
   {
+    $data = $request->all();
 
-    $rules = [
-      'face_template' => 'required|string'
-    ];
+    if (is_array(reset($data))) {
+      $rules = ['*.face_template' => 'required|string'];
+    } else {
+      $rules = ['face_template' => 'required|string'];
+    }
 
-    $validator = \Validator::make($request->all(), $rules);
+    $validator = \Validator::make($data, $rules);
 
     if ($validator->fails()) {
       throw new ValidationException($validator);

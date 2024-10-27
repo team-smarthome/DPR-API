@@ -65,31 +65,40 @@ class PegawaiRepository implements PegawaiRepositoryInterface
     try {
       DB::beginTransaction();
 
-      // ** Check NIP ** //
-      $existingNip = Pegawai::where('nip', $data['pegawai']['nip'])->first();
-      if ($existingNip) {
-        DB::rollBack();
-        return $this->wrapResponse(Response::HTTP_CONFLICT, 'NIP already exists');
+      $createdPegawai = [];
+
+      foreach ($data as $pegawaiData) {
+        // ** Check NIP ** //
+        $existingNip = Pegawai::where('nip', $pegawaiData['pegawai']['nip'])->first();
+        if ($existingNip) {
+          DB::rollBack();
+          return $this->wrapResponse(Response::HTTP_CONFLICT, 'NIP already exists');
+        }
+
+        if (isset($pegawaiData['facial_data']['face_template']) && $this->isBase64Image($pegawaiData['facial_data']['face_template'])) {
+          $pegawaiData['facial_data']['face_template'] = $this->saveBase64Image($pegawaiData['facial_data']['face_template'], 'images/facial_data');
+        }
+
+        $facial = FacialData::create($pegawaiData['facial_data']);
+
+        $pegawaiData = array_merge($pegawaiData['pegawai'], ['face_id' => $facial->id]);
+        $pegawai = Pegawai::create($pegawaiData);
+
+        $createdPegawai[] = [
+          'facial_data' => $facial,
+          'pegawai' => $pegawai,
+        ];
       }
-
-      if (isset($data['facial_data']['face_template']) && $this->isBase64Image($data['facial_data']['face_template'])) {
-        $data['facial_data']['face_template'] = $this->saveBase64Image($data['facial_data']['face_template'], 'images/facial_data');
-      }
-
-      //** FacialData **//
-      $facial = FacialData::create($data['facial_data']);
-
-      //** PegawaiData **//
-      $pegawaiData = array_merge($data['pegawai'], ['face_id' => $facial->id]);
-      $pegawai = Pegawai::create($pegawaiData);
-
 
       DB::commit();
-      return $this->created(['facial_data' => $facial, 'pegawai' => $pegawai]);
+      return $this->created($createdPegawai);
     } catch (\Throwable $th) {
-      return $th;
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data pegawai.' . $th->getMessage());
     }
   }
+
+
 
   public function get(Request $request)
   {

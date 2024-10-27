@@ -10,6 +10,11 @@ class DeviceRequest
   public function validate(Request $request)
   {
     $data = $request->except(['user_id', 'role_id', 'nama_role']);
+
+    if (isset($data['nama_device'])) {
+      // Single item format, wrap in an array
+      $data = [$data];
+    }
     $rules = [
       '*.nama_device' => 'required|string|max:255',
       '*.zona_id' => 'required|string|max:255',
