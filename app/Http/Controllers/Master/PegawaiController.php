@@ -56,16 +56,35 @@ class PegawaiController extends Controller
       $facialRequest = new FacialDataRequest();
       $pegawaiRequest = new PegawaiRequest();
 
-      return $this->pegawaiRepositoryInterface->createPegawaiWithoutUser(
-        [
-          'facial_data' => $facialRequest->validate($request),
-          'pegawai' =>  $pegawaiRequest->validate($request),
-        ]
-      );
+      $validatedFacialData = $facialRequest->validate($request);
+      $validatedPegawaiData = $pegawaiRequest->validate($request);
+
+      $data = [];
+
+      // Jika hanya satu pegawai, bungkus dalam array
+      if (!isset($validatedPegawaiData[0])) {
+        $data[] = [
+          'facial_data' => $validatedFacialData,
+          'pegawai' => $validatedPegawaiData,
+        ];
+      } else {
+        // Jika banyak pegawai
+        foreach ($validatedPegawaiData as $key => $pegawai) {
+          $data[] = [
+            'facial_data' => $validatedFacialData[$key] ?? null,
+            'pegawai' => $pegawai,
+          ];
+        }
+      }
+
+      return $this->pegawaiRepositoryInterface->createPegawaiWithoutUser($data);
     } catch (ValidationException $e) {
       return $this->alreadyExist($e->getMessage());
     }
   }
+
+
+
 
   public function update(Request $request, $id)
   {
