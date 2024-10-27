@@ -26,27 +26,22 @@ class DeviceRepository implements DeviceRepositoryInterface
 
   public function create(array $data)
   {
-    $createdDevices = [];
+    try {
+      $createdDevices = [];
 
-    foreach ($data as $deviceData) {
-      // Check if the device with the same 'nama_device' already exists
-      $existingDevice = Device::where('nama_device', $deviceData['nama_device'])->first();
-
-      // If the device exists, skip this one
-      if ($existingDevice) {
-        continue;
+      foreach ($data as $deviceData) {
+        $existingDevice = Device::where('nama_device', $deviceData['nama_device'])->first();
+        if ($existingDevice) {
+          return $this->alreadyExist('Device Already Exist');
+        }
+        $createdDevices[] = Device::create($deviceData);
       }
 
-      // Create the device and store it in the $createdDevices array
-      $createdDevices[] = Device::create($deviceData);
+      // Return the list of created devices
+      return $this->created($createdDevices);
+    } catch (\Exception $e) {
+      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data.');
     }
-
-    // Return the list of created devices
-    return [
-      'status' => 'success',
-      'message' => 'Devices created successfully',
-      'devices' => $createdDevices
-    ];
   }
 
   public function get(Request $request)
