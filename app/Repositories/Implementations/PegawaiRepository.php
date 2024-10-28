@@ -68,8 +68,7 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       $createdPegawai = [];
 
       foreach ($data as $pegawaiData) {
-        $jabatan = Jabatan::where('nama_jabatan', $pegawaiData['pegawai']['nama_jabatan'])->first();
-
+        $jabatan = Jabatan::whereRaw('LOWER(nama_jabatan) = ?', [strtolower($pegawaiData['pegawai']['nama_jabatan'])])->first();
         if (!$jabatan) {
           DB::rollBack();
           return $this->wrapResponse(Response::HTTP_NOT_FOUND, 'Jabatan tidak ditemukan');
