@@ -8,39 +8,39 @@ use App\Traits\ResponseTrait;
 use Illuminate\Http\Response;
 use App\Http\Resources\DeviceResource;
 use App\Repositories\Interfaces\DeviceRepositoryInterface;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class DeviceRepository implements DeviceRepositoryInterface
 {
   use ResponseTrait;
-  // public function create(array $data)
-  // {
-  //   $existingDevice = Device::where('nama_device', $data['nama_device'])->first();
-
-  //   if ($existingDevice) {
-  //     return $this->alreadyExist('Device Already Exist');
-  //   }
-
-  //   return $this->created(Device::create($data));
-  // }
 
   public function create(array $data)
   {
     try {
+      DB::beginTransaction();
       $createdDevices = [];
+      $existingDevices = [];
 
       foreach ($data as $deviceData) {
         $existingDevice = Device::where('nama_device', $deviceData['nama_device'])->first();
         if ($existingDevice) {
-          return $this->alreadyExist('Device Already Exist');
+          $existingDevices[] = $deviceData['nama_device'];
+          continue;
         }
         $createdDevices[] = Device::create($deviceData);
       }
 
-      // Return the list of created devices
+      if (!empty($existingDevices)) {
+        DB::rollBack();
+        return $this->alreadyExist(implode(', ', $existingDevices) . ' Already Exist');
+      }
+
+      DB::commit();
       return $this->created($createdDevices);
     } catch (\Exception $e) {
-      return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data.');
+      DB::rollBack();
+      return $this->wrapResponse(Response::HTTP_CONFLICT, 'Terjadi kesalahan saat membuat data. ' . $e->getMessage());
     }
   }
 
