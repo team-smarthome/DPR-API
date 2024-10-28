@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Master;
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\PegawaiAuthRequest;
 use App\Http\Requests\Auth\UpdateIsActivePegawaiRequest;
 use App\Http\Requests\Master\CheckCredentialPegawaiRequest;
 use App\Http\Requests\Master\FacialDataRequest;
@@ -34,7 +35,7 @@ class PegawaiController extends Controller
   {
     try {
       $facialRequest = new FacialDataRequest();
-      $pegawaiRequest = new PegawaiRequest();
+      $pegawaiRequest = new PegawaiAuthRequest();
 
       return $this->pegawaiRepositoryInterface->create(
         [
