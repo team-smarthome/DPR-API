@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Dotenv\Exception\ValidationException;
 use App\Http\Resources\Master\PegawaiResource;
 use App\Models\FacialData;
+use App\Models\Jabatan;
 use App\Models\Role;
 use App\Models\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -64,11 +65,19 @@ class PegawaiRepository implements PegawaiRepositoryInterface
   {
     try {
       DB::beginTransaction();
-
       $createdPegawai = [];
 
       foreach ($data as $pegawaiData) {
-        // ** Check NIP ** //
+        $jabatan = Jabatan::where('nama_jabatan', $pegawaiData['pegawai']['nama_jabatan'])->first();
+
+        if (!$jabatan) {
+          DB::rollBack();
+          return $this->wrapResponse(Response::HTTP_NOT_FOUND, 'Jabatan tidak ditemukan');
+        }
+
+        $pegawaiData['pegawai']['jabatan_id'] = $jabatan->id;
+        unset($pegawaiData['pegawai']['nama_jabatan']);
+
         $existingNip = Pegawai::where('nip', $pegawaiData['pegawai']['nip'])->first();
         if ($existingNip) {
           DB::rollBack();
@@ -80,7 +89,6 @@ class PegawaiRepository implements PegawaiRepositoryInterface
         }
 
         $facial = FacialData::create($pegawaiData['facial_data']);
-
         $pegawaiData = array_merge($pegawaiData['pegawai'], ['face_id' => $facial->id]);
         $pegawai = Pegawai::create($pegawaiData);
 
@@ -97,6 +105,45 @@ class PegawaiRepository implements PegawaiRepositoryInterface
       return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data pegawai.' . $th->getMessage());
     }
   }
+
+
+  // public function createPegawaiWithoutUser(array $data)
+  // {
+  //   try {
+  //     DB::beginTransaction();
+
+  //     $createdPegawai = [];
+
+  //     foreach ($data as $pegawaiData) {
+  //       // ** Check NIP ** //
+  //       $existingNip = Pegawai::where('nip', $pegawaiData['pegawai']['nip'])->first();
+  //       if ($existingNip) {
+  //         DB::rollBack();
+  //         return $this->wrapResponse(Response::HTTP_CONFLICT, 'NIP already exists');
+  //       }
+
+  //       if (isset($pegawaiData['facial_data']['face_template']) && $this->isBase64Image($pegawaiData['facial_data']['face_template'])) {
+  //         $pegawaiData['facial_data']['face_template'] = $this->saveBase64Image($pegawaiData['facial_data']['face_template'], 'images/facial_data');
+  //       }
+
+  //       $facial = FacialData::create($pegawaiData['facial_data']);
+
+  //       $pegawaiData = array_merge($pegawaiData['pegawai'], ['face_id' => $facial->id]);
+  //       $pegawai = Pegawai::create($pegawaiData);
+
+  //       $createdPegawai[] = [
+  //         'facial_data' => $facial,
+  //         'pegawai' => $pegawai,
+  //       ];
+  //     }
+
+  //     DB::commit();
+  //     return $this->created($createdPegawai);
+  //   } catch (\Throwable $th) {
+  //     DB::rollBack();
+  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan saat membuat data pegawai.' . $th->getMessage());
+  //   }
+  // }
 
 
 
