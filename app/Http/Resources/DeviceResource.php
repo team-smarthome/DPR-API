@@ -18,6 +18,10 @@ class DeviceResource extends JsonResource
       'ip_address' => $this->ip_address,
       'mac_address' => $this->mac_address,
       'rtsp_url' => $this->rtsp_url,
+      'url_cp_device' => $this->url_cp_device,
+      'username_cp_device' => $this->username_cp_device,
+      'password_cp_device' => $this->password_cp_device,
+      'timezone_cp_device' => $this->timezone_cp_device,
     ];
   }
 }
