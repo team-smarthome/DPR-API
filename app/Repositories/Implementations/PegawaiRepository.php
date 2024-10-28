@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Dotenv\Exception\ValidationException;
 use App\Http\Resources\Master\PegawaiResource;
 use App\Models\FacialData;
+use App\Models\GrupPegawai;
 use App\Models\Jabatan;
 use App\Models\Role;
 use App\Models\User;
@@ -69,14 +70,22 @@ class PegawaiRepository implements PegawaiRepositoryInterface
 
       foreach ($data as $pegawaiData) {
         $jabatan = Jabatan::whereRaw('LOWER(nama_jabatan) = ?', [strtolower($pegawaiData['pegawai']['nama_jabatan'])])->first();
+        $grupPegawai = GrupPegawai::whereRaw('LOWER(nama_grup_pegawai) = ?', [strtolower($pegawaiData['pegawai']['nama_grup_pegawai'])])->first();
         if (!$jabatan) {
           DB::rollBack();
           return $this->wrapResponse(Response::HTTP_NOT_FOUND, 'Jabatan tidak ditemukan');
         }
 
+        if (!$grupPegawai) {
+          DB::rollBack();
+          return $this->wrapResponse(Response::HTTP_NOT_FOUND, 'Grup Pegawai tidak ditemukan');
+        }
+
         $pegawaiData['pegawai']['jabatan_id'] = $jabatan->id;
         unset($pegawaiData['pegawai']['nama_jabatan']);
 
+        $pegawaiData['pegawai']['grup_pegawai_id'] = $grupPegawai->id;
+        unset($pegawaiData['pegawai']['nama_grup_pegawai']);
         $existingNip = Pegawai::where('nip', $pegawaiData['pegawai']['nip'])->first();
         if ($existingNip) {
           DB::rollBack();

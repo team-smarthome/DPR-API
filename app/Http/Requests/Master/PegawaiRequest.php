@@ -23,7 +23,7 @@ class PegawaiRequest
         '*.phone' => 'string|max:100',
         '*.palm_data_id' => 'string|max:36',
         '*.face_id' => 'string|max:36',
-        '*.grup_pegawai_id' => 'max:36',
+        '*.nama_grup_pegawai' => 'max:36',
         '*.role_id' => 'max:36',
       ];
     } else {
@@ -37,7 +37,7 @@ class PegawaiRequest
         'phone' => 'string|max:100',
         'palm_data_id' => 'string|max:36',
         'face_id' => 'string|max:36',
-        'grup_pegawai_id' => 'max:36',
+        'nama_grup_pegawai' => 'max:36',
         'role_id' => 'max:36',
       ];
     }

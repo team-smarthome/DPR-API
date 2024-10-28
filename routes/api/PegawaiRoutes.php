@@ -5,8 +5,8 @@ use App\Http\Controllers\Master\PegawaiController;
 $router->post('auth/pegawai', 'Master\PegawaiController@store');
 
 $router->group(['prefix' => 'master'], function () use ($router) {
+  $router->post('/pegawai/add-without-user', 'Master\PegawaiController@createPegawaiWithoutUser');
   $router->group(['middleware' => 'auth:admin'], function () use ($router) {
-    $router->post('/pegawai/add-without-user', 'Master\PegawaiController@createPegawaiWithoutUser');
     $router->get('/pegawai', 'Master\PegawaiController@index');
     $router->get('/getMe', 'Master\PegawaiController@getMe');
 
