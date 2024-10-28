@@ -98,18 +98,18 @@ class GrupPegawaiRepository implements GrupPegawaiRepositoryInterface
       }
 
 
-      if (isset($data['nama_grup_pegawai'])) {
-        $existingGrupPegawai = GrupPegawai::where('nama_grup_pegawai', $data['nama_grup_pegawai'])
-          ->where('id', '!=', $id)
-          ->first();
+      // if (isset($data['nama_grup_pegawai'])) {
+      //   $existingGrupPegawai = GrupPegawai::where('nama_grup_pegawai', $data['nama_grup_pegawai'])
+      //     ->where('id', '!=', $id)
+      //     ->first();
 
-        if ($existingGrupPegawai) {
-          return $this->alreadyExist('Grup Pegawai with this name already exists');
-        }
-      }
+      //   if ($existingGrupPegawai) {
+      //     return $this->alreadyExist('Grup Pegawai with this name already exists');
+      //   }
+      // }
 
 
-      $model->update($data);
+      $model->updated();
       return $this->updated($model);
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
