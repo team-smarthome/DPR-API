@@ -10,27 +10,31 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AbsensiPegawai extends Model
 {
 
-    use SoftDeletes, HasUuids;
-    protected $table = 'absensi_pegawai';
+  use SoftDeletes, HasUuids;
+  protected $table = 'absensi_pegawai';
 
-    protected $fillable = [
-        'id',
-        'pegawai_id',
-        'nama_absensi_pegawai',
-        'is_wfh',
-        'image_url',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+  protected $fillable = [
+    'id',
+    'pegawai_id',
+    'nama_absensi_pegawai',
+    'status',
+    'jenis',
+    'waktu_mulai',
+    'waktu_selesai',
+    'approved_by_id',
+    'keterangan',
+    'image_url',
+    'created_at',
+    'updated_at',
+    'deleted_at',
+  ];
 
-    public $incrementing = false;
-    protected $keyType = 'uuid';
-    public $timestamps = true;
+  public $incrementing = false;
+  protected $keyType = 'uuid';
+  public $timestamps = true;
 
-    public function pegawai()
-    {
-        return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id');
-    }
-
+  public function pegawai()
+  {
+    return $this->belongsTo(Pegawai::class, 'pegawai_id', 'id');
+  }
 }

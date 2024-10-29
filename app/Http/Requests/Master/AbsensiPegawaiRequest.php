@@ -4,23 +4,22 @@ namespace App\Http\Requests\Master;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
-
 
 class AbsensiPegawaiRequest
 {
-    public function validate(Request $request)
+  public function validate(Request $request)
   {
-
-
     $rules = [
-        'pegawai_id' => 'string|max:36',
-        'nama_absensi_pegawai' => '',
-        'is_wfh' => 'integer',
-        'image_url' => 'string',
-
+      'pegawai_id' => 'required|string|max:36',
+      'nama_absensi_pegawai' => 'required|string|max:100',
+      'jenis' => 'required|integer|in:0,1',
+      'image_url' => 'nullable|string',
+      'status' => 'nullable|string',
+      'keterangan' => 'nullable|string',
+      'waktu_mulai' => 'required|date',
+      'waktu_selesai' => 'nullable|date',
+      'approved_by_id' => 'nullable|string|max:36',
     ];
-
 
     $validator = \Validator::make($request->all(), $rules);
 
