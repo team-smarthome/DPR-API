@@ -44,21 +44,34 @@ class AbsensiPegawaiResource extends JsonResource
 
     return [
       'id' => $this->id,
-      'pegawai_id' => $this->pegawai_id,
-      'nip' => $this->pegawai->nip ?? null,
-      'nama_pegawai' => $this->pegawai->nama_pegawai ?? null,
-      'jenis_kelamin' => $this->pegawai->jenis_kelamin ?? null,
-      'is_active' => $this->pegawai->is_active ?? null,
-      'jabatan_id' => $this->pegawai->jabatan_id ?? null,
-      'email' => $this->pegawai->email ?? null,
-      'phone' => $this->pegawai->phone ?? null,
-      'palm_data_id' => $this->pegawai->palm_data_id ?? null,
-      'face_id' => $this->pegawai->face_id ?? null,
-      'grup_pegawai_id' => $this->pegawai->grup_pegawai_id ?? null,
+      'pegawai' => $this->pegawai,
       'image_url' => $this->image_url,
-      'keterangan' => $keterangan,  // Add calculated keterangan to the response
+      'waktu_mulai' => $this->waktu_mulai,
+      'waktu_selesai' => $this->waktu_selesai,
+      'keterangan' => $keterangan,
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at
     ];
   }
 }
+
+
+
+
+
+// 'id' => $this->id,
+// 'pegawai_id' => $this->pegawai_id,
+// 'nip' => $this->pegawai->nip ?? null,
+// 'nama_pegawai' => $this->pegawai->nama_pegawai ?? null,
+// 'jenis_kelamin' => $this->pegawai->jenis_kelamin ?? null,
+// 'is_active' => $this->pegawai->is_active ?? null,
+// 'jabatan_id' => $this->pegawai->jabatan_id ?? null,
+// 'email' => $this->pegawai->email ?? null,
+// 'phone' => $this->pegawai->phone ?? null,
+// 'palm_data_id' => $this->pegawai->palm_data_id ?? null,
+// 'face_id' => $this->pegawai->face_id ?? null,
+// 'grup_pegawai_id' => $this->pegawai->grup_pegawai_id ?? null,
+// 'image_url' => $this->image_url,
+// 'keterangan' => $keterangan,  
+// 'created_at' => $this->created_at,
+// 'updated_at' => $this->updated_at
