@@ -48,22 +48,52 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
     }
   }
 
+  // public function get(Request $request)
+  // {
+  //   try {
+  //     $collection = AbsensiPegawai::with(['pegawai'])->latest();
+  //     $isNotPaginate = $request->query("not-paginate");
+
+
+  //     if ($isNotPaginate) {
+  //       $collection = $collection->get();
+  //       $result = AbsensiPegawaiResource::collection($collection)->response()->getData(true);
+  //       return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+  //     } else {
+  //       return $this->paginate2($collection, 'Successfully get Data', AbsensiPegawaiResource::class);
+  //     }
+  //   } catch (ValidationException $e) {
+  //     return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
+  //   } catch (ErrorException $e) {
+  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
+  //   } catch (\Throwable $th) {
+  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
+  //   }
+  // }
+
   public function get(Request $request)
   {
     try {
+      // Mengambil query builder untuk AbsensiPegawai dengan relasi pegawai
       $collection = AbsensiPegawai::with(['pegawai'])->latest();
-      $keyword = $request->query("search");
-      $isNotPaginate = $request->query("not-paginate");
 
-      if ($keyword) {
-        $collection->where('nama_pegawai', 'ILIKE', "%$keyword%");
+      // Cek apakah terdapat parameter 'pegawai_id' di request
+      $pegawaiId = $request->query("pegawai_id");
+
+      if ($pegawaiId) {
+        $collection->where('pegawai_id', $pegawaiId);
       }
 
+      // Periksa jika ada parameter 'not-paginate'
+      $isNotPaginate = $request->query("not-paginate");
+
       if ($isNotPaginate) {
+        // Jika tidak menggunakan pagination, ambil semua data
         $collection = $collection->get();
         $result = AbsensiPegawaiResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
+        // Jika menggunakan pagination, gunakan metode paginate2
         return $this->paginate2($collection, 'Successfully get Data', AbsensiPegawaiResource::class);
       }
     } catch (ValidationException $e) {
