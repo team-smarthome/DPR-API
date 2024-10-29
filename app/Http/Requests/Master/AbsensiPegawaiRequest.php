@@ -9,10 +9,11 @@ class AbsensiPegawaiRequest
 {
   public function validate(Request $request)
   {
+
     $rules = [
       'pegawai_id' => 'required|string|max:36',
       'nama_absensi_pegawai' => 'required|string|max:100',
-      'jenis' => 'required|integer|in:0,1',
+      'jenis' => 'string',
       'image_url' => 'nullable|string',
       'status' => 'nullable|string',
       'keterangan' => 'nullable|string',
@@ -20,6 +21,7 @@ class AbsensiPegawaiRequest
       'waktu_selesai' => 'nullable|date',
       'approved_by_id' => 'nullable|string|max:36',
     ];
+
 
     $validator = \Validator::make($request->all(), $rules);
 

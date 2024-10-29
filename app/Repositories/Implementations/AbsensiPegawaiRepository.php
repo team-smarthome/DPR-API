@@ -18,82 +18,60 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
 {
 
   use ResponseTrait;
+
+
   public function create(array $data)
   {
     try {
-      $tepatWaktu = Carbon::createFromTime(9, 0, 0);  // Waktu referensi untuk tepat waktu
-      $waktuMulai = Carbon::parse($data['waktu_mulai']); // Parse waktu mulai dari input
+      $waktuMulai = strtotime($data['waktu_mulai']);
+      $batasTepatWaktu = strtotime(date('Y-m-d 09:00:00', $waktuMulai));
 
-      if ($waktuMulai->lessThanOrEqualTo($tepatWaktu)) {
-        $data['keterangan'] = 'Tepat Waktu';
-      } else {
-        $diffInMinutes = $waktuMulai->diffInMinutes($tepatWaktu);
-        $hours = floor($diffInMinutes / 60);
-        $minutes = $diffInMinutes % 60;
+      if ($waktuMulai > $batasTepatWaktu) {
+        $data['keterangan'] = 'telat';
+        $keterlambatanDetik = $waktuMulai - $batasTepatWaktu;
 
-        if ($hours > 0) {
-          $data['keterangan'] = "Terlambat {$hours} jam {$minutes} menit";
+        $keterlambatanMenit = floor($keterlambatanDetik / 60);
+        $keterlambatanJam = floor($keterlambatanMenit / 60);
+        $sisaMenit = $keterlambatanMenit % 60;
+
+        if ($keterlambatanJam > 0) {
+          $data['keterangan'] .= " $keterlambatanJam jam $sisaMenit menit";
         } else {
-          $data['keterangan'] = "Terlambat {$minutes} menit";
+          $data['keterangan'] .= " $keterlambatanMenit menit";
         }
+      } else {
+        $data['keterangan'] = 'tepat waktu';
       }
-
 
       if (isset($data['image_url']) && $this->isBase64Image($data['image_url'])) {
         $data['image_url'] = $this->saveBase64Image($data['image_url'], 'images/absensi_pegawai');
       }
+
       return $this->created(AbsensiPegawai::create($data));
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
     }
   }
 
-  // public function get(Request $request)
-  // {
-  //   try {
-  //     $collection = AbsensiPegawai::with(['pegawai'])->latest();
-  //     $isNotPaginate = $request->query("not-paginate");
-
-
-  //     if ($isNotPaginate) {
-  //       $collection = $collection->get();
-  //       $result = AbsensiPegawaiResource::collection($collection)->response()->getData(true);
-  //       return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
-  //     } else {
-  //       return $this->paginate2($collection, 'Successfully get Data', AbsensiPegawaiResource::class);
-  //     }
-  //   } catch (ValidationException $e) {
-  //     return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
-  //   } catch (ErrorException $e) {
-  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan internal.');
-  //   } catch (\Throwable $th) {
-  //     return $this->wrapResponse(Response::HTTP_INTERNAL_SERVER_ERROR, 'Terjadi kesalahan: ' . $th->getMessage());
-  //   }
-  // }
 
   public function get(Request $request)
   {
     try {
-      // Mengambil query builder untuk AbsensiPegawai dengan relasi pegawai
       $collection = AbsensiPegawai::with(['pegawai'])->latest();
 
-      // Cek apakah terdapat parameter 'pegawai_id' di request
       $pegawaiId = $request->query("pegawai_id");
 
       if ($pegawaiId) {
         $collection->where('pegawai_id', $pegawaiId);
       }
 
-      // Periksa jika ada parameter 'not-paginate'
       $isNotPaginate = $request->query("not-paginate");
 
       if ($isNotPaginate) {
-        // Jika tidak menggunakan pagination, ambil semua data
         $collection = $collection->get();
         $result = AbsensiPegawaiResource::collection($collection)->response()->getData(true);
         return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
       } else {
-        // Jika menggunakan pagination, gunakan metode paginate2
         return $this->paginate2($collection, 'Successfully get Data', AbsensiPegawaiResource::class);
       }
     } catch (ValidationException $e) {
@@ -121,9 +99,37 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
       return $this->notFound();
     }
 
+    $waktuMulai = strtotime($data['waktu_mulai']);
+    $batasTepatWaktu = strtotime(date('Y-m-d 09:00:00', $waktuMulai));
+
+    if ($waktuMulai > $batasTepatWaktu) {
+      $data['keterangan'] = 'telat';
+      $keterlambatanDetik = $waktuMulai - $batasTepatWaktu;
+
+      $keterlambatanMenit = floor($keterlambatanDetik / 60);
+      $keterlambatanJam = floor($keterlambatanMenit / 60);
+      $sisaMenit = $keterlambatanMenit % 60;
+
+      if ($keterlambatanJam > 0) {
+        $data['keterangan'] .= " $keterlambatanJam jam $sisaMenit menit";
+      } else {
+        $data['keterangan'] .= " $keterlambatanMenit menit";
+      }
+    } else {
+      $data['keterangan'] = 'tepat waktu';
+    }
+
+    if (isset($data['image_url']) && $this->isBase64Image($data['image_url'])) {
+      $data['image_url'] = $this->saveBase64Image($data['image_url'], 'images/absensi_pegawai');
+    } else {
+
+      unset($data['image_url']);
+    }
+
     $model->update($data);
     return $this->updated();
   }
+
 
   public function delete(string $id)
   {

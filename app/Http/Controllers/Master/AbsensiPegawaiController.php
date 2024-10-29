@@ -29,7 +29,7 @@ class AbsensiPegawaiController extends Controller
 
   public function store(Request $request)
   {
-
+    // dd($request->all());
     try {
       $absensiPegawaiRequest = new AbsensiPegawaiRequest();
       $data = $absensiPegawaiRequest->validate($request);

@@ -12,7 +12,9 @@ class AbsensiPegawai extends Model
 
   use SoftDeletes, HasUuids;
   protected $table = 'absensi_pegawai';
-
+  protected $keyType = 'uuid';
+  public $incrementing = false;
+  public $timestamps = true;
   protected $fillable = [
     'id',
     'pegawai_id',
@@ -29,9 +31,7 @@ class AbsensiPegawai extends Model
     'deleted_at',
   ];
 
-  public $incrementing = false;
-  protected $keyType = 'uuid';
-  public $timestamps = true;
+
 
   public function pegawai()
   {
