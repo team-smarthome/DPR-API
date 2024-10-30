@@ -47,6 +47,9 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
         $data['image_url'] = $this->saveBase64Image($data['image_url'], 'images/absensi_pegawai');
       }
 
+      if ($data['waktu_keluar'] <= $data['waktu_masuk']) {
+        return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'Waktu keluar tidak boleh lebih kecil atau sama dengan waktu masuk');
+      }
       return $this->created(AbsensiPegawai::create($data));
     } catch (ValidationException $e) {
       return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
@@ -126,6 +129,9 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
       unset($data['image_url']);
     }
 
+    if ($data['waktu_keluar'] <= $data['waktu_masuk']) {
+      return $this->wrapResponse(Response::HTTP_BAD_REQUEST, 'Waktu keluar tidak boleh lebih kecil atau sama dengan waktu masuk');
+    }
     $model->update($data);
     return $this->updated();
   }

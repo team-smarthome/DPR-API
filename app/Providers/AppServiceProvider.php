@@ -42,12 +42,14 @@ use App\Repositories\Interfaces\RentSmartLockerRepositoryInterface;
 use App\Repositories\Interfaces\SmartLockerCompartmentRepositoryInterface;
 use App\Repositories\Interfaces\VehicleRepositoryInterface;
 use App\Repositories\Implementations\GrupVehiclePegawaiRepository;
+use App\Repositories\Implementations\LemburPegawaiRepository;
 use App\Repositories\Implementations\UserPengunjungRepository;
 use App\Repositories\Implementations\UserRepository;
 use App\Repositories\Interfaces\GrupVehiclePegawaiRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\UserRoleRepositoryInterface;
 use App\Repositories\Implementations\UserRoleRepository;
+use App\Repositories\Interfaces\LemburPegawaiRepositoryInterface;
 use App\Repositories\Interfaces\UserPengunjungRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
@@ -58,6 +60,7 @@ class AppServiceProvider extends ServiceProvider
    * @return void
    */
   public function register()
+
 
   {
     $this->app->bind(DeviceZoneRepositoryInterface::class, DeviceZoneRepository::class);
@@ -83,5 +86,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     $this->app->bind(UserRoleRepositoryInterface::class, UserRoleRepository::class);
     $this->app->bind(UserPengunjungRepositoryInterface::class, UserPengunjungRepository::class);
+    $this->app->bind(LemburPegawaiRepositoryInterface::class, LemburPegawaiRepository::class);
   }
 }
