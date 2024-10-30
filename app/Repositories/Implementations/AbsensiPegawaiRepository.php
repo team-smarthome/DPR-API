@@ -23,7 +23,7 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
   public function create(array $data)
   {
     try {
-      $waktuMulai = strtotime($data['waktu_mulai']);
+      $waktuMulai = strtotime($data['waktu_masuk']);
       $batasTepatWaktu = strtotime(date('Y-m-d 09:00:00', $waktuMulai));
 
       if ($waktuMulai > $batasTepatWaktu) {
@@ -99,7 +99,7 @@ class AbsensiPegawaiRepository implements AbsensiPegawaiRepositoryInterface
       return $this->notFound();
     }
 
-    $waktuMulai = strtotime($data['waktu_mulai']);
+    $waktuMulai = strtotime($data['waktu_masuk']);
     $batasTepatWaktu = strtotime(date('Y-m-d 09:00:00', $waktuMulai));
 
     if ($waktuMulai > $batasTepatWaktu) {
