@@ -12,10 +12,9 @@ return new class extends Migration
   public function up(): void
   {
     Schema::table('absensi_pegawai', function (Blueprint $table) {
-      $table->uuid('approved_by_id')->nullable();
+      $table->renameColumn('waktu_mulai', 'waktu_masuk');
 
-
-      $table->foreign('approved_by_id')->references('id')->on('pegawai');
+      $table->renameColumn('waktu_selesai', 'waktu_keluar');
     });
   }
 
@@ -25,11 +24,9 @@ return new class extends Migration
   public function down(): void
   {
     Schema::table('absensi_pegawai', function (Blueprint $table) {
+      $table->renameColumn('waktu_masuk', 'waktu_mulai');
 
-      $table->dropForeign(['approved_by_id']);
-
-
-      $table->dropColumn('approved_by_id');
+      $table->renameColumn('waktu_keluar', 'waktu_selesai');
     });
   }
 };

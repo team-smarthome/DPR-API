@@ -17,8 +17,8 @@ class AbsensiPegawaiRequest
       'image_url' => 'nullable|string',
       'status' => 'nullable|string',
       'keterangan' => 'nullable|string',
-      'waktu_mulai' => 'required|date',
-      'waktu_selesai' => 'nullable|date',
+      'waktu_masuk' => 'required|date',
+      'waktu_keluar' => 'nullable|date',
       'approved_by_id' => 'nullable|string|max:36',
     ];
 
