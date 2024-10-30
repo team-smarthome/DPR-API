@@ -20,8 +20,8 @@ class AbsensiPegawaiResource extends JsonResource
       'id' => $this->id,
       'pegawai' => $this->pegawai,
       'image_url' => $this->image_url,
-      'waktu_mulai' => $this->waktu_mulai,
-      'waktu_selesai' => $this->waktu_selesai,
+      'waktu_masuk' => $this->waktu_masuk,
+      'waktu_keluar' => $this->waktu_selesai,
       'keterangan' => $this->keterangan,
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at
