@@ -18,11 +18,12 @@ class AbsensiPegawaiResource extends JsonResource
   {
     return [
       'id' => $this->id,
+      'nama_absensi_pegawai' => $this->nama_absensi_pegawai,
       'pegawai' => $this->pegawai,
       'image_url' => $this->image_url,
       'jenis' => $this->jenis,
       'waktu_masuk' => $this->waktu_masuk,
-      'waktu_keluar' => $this->waktu_selesai,
+      'waktu_keluar' => $this->waktu_keluar,
       'keterangan' => $this->keterangan,
       'created_at' => $this->created_at,
       'updated_at' => $this->updated_at
