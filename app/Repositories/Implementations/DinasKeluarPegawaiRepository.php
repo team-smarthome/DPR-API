@@ -37,23 +37,28 @@ class DinasKeluarPegawaiRepository implements DinasKeluarPegawaiRepositoryInterf
 
   public function get(Request $request)
   {
-    $collection = DinasKeluarPegawai::with(['pegawai'])->latest();
-    $pegawaiId = $request->query("pegawai_id");
+    try {
+      $collection = DinasKeluarPegawai::with(['pegawai'])->latest();
+      $pegawaiId = $request->query("pegawai_id");
 
-    if ($pegawaiId) {
-      $collection->where('pegawai_id', $pegawaiId);
-    }
+      if ($pegawaiId) {
+        $collection->where('pegawai_id', $pegawaiId);
+      }
 
-    $isNotPaginate = $request->query("not-paginate");
+      $isNotPaginate = $request->query("not-paginate");
 
-    if ($isNotPaginate) {
-      $collection = $collection->get();
-      $result = DinasKeluarPegawaiResource::collection($collection)->response()->getData(true);
-      return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
-    } else {
-      return $this->paginate2($collection, 'Successfully get Data', DinasKeluarPegawaiResource::class);
+      if ($isNotPaginate) {
+        $collection = $collection->get();
+        $result = DinasKeluarPegawaiResource::collection($collection)->response()->getData(true);
+        return $this->wrapResponse(Response::HTTP_OK, 'Successfully get Data', $result);
+      } else {
+        return $this->paginate2($collection, 'Successfully get Data', DinasKeluarPegawaiResource::class);
+      }
+    } catch (\Exception $e) {
+      return $this->wrapResponse(Response::HTTP_BAD_REQUEST, $e->getMessage());
     }
   }
+
 
   public function getById(string $id)
   {
