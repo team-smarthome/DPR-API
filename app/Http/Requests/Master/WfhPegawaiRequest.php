@@ -9,17 +9,22 @@ use Illuminate\Validation\Rule;
 
 class WfhPegawaiRequest
 {
-    public function validate(Request $request)
+  public function validate(Request $request)
   {
 
 
     $rules = [
-        'pegawai_id' => 'string|max:36',
-        'nama_wfh_pegawai' => '',
-        'waktu_mulai' => 'date',
-        'waktu_selesai' => 'date',
-        'jumlah_hari' => 'integer',
-
+      'pegawai_id' => 'string|max:36',
+      'nama_wfh_pegawai' => '',
+      'waktu_mulai' => 'date',
+      'waktu_selesai' => 'date',
+      'jumlah_hari' => 'integer',
+      'waktu_mulai' => 'required|date',
+      'waktu_selesai' => 'nullable|date',
+      'image_url' => 'nullable|string',
+      'status' => 'string|max:100',
+      'keterangan' => 'string|max:100',
+      'approved_by_id' => 'string|max:36',
     ];
 
 
