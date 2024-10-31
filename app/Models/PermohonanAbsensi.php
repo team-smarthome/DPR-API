@@ -6,20 +6,21 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LemburPegawai extends Model
+class PermohonanAbsensi extends Model
 {
   use SoftDeletes, HasUuids;
-  protected $table = 'lembur_pegawai';
+  protected $table = 'permohonan_absensi';
 
   protected $fillable = [
     'pegawai_id',
-    'nama_absensi_pegawai',
+    'nama_permohonan',
     'status',
-    'jenis',
-    'image_url',
-    'waktu_masuk',
-    'waktu_keluar',
+    'image_lampiran',
+    'waktu_mulai',
+    'waktu_selesai',
+    'jumlah_hari',
     'keterangan',
+    'jenis_permohonan',
     'approved_by_id'
   ];
 
