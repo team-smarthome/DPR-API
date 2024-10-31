@@ -73,6 +73,11 @@ class Pegawai extends Model
     return $this->hasMany(LemburPegawai::class, 'pegawai_id', 'id');
   }
 
+  public function permohonanAbsensi()
+  {
+    return $this->hasMany(PermohonanAbsensi::class, 'pegawai_id', 'id');
+  }
+
   public function vehicle()
   {
     return $this->hasMany(Vehicle::class, 'pegawai_id', 'id');
