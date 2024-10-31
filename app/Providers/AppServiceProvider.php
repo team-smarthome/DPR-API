@@ -32,6 +32,7 @@ use App\Repositories\Interfaces\WfhPegawaiRepositoryInterface;
 use App\Repositories\Implementations\AbsensiPegawaiRepository;
 use App\Repositories\Implementations\FacialDataRepository;
 use App\Repositories\Implementations\AuthPengunjungRepository;
+use App\Repositories\Implementations\DinasKeluarPegawaiRepository;
 use App\Repositories\Implementations\RentSmartLockerRepository;
 use App\Repositories\Implementations\SmartLockerCompartmentRepository;
 use App\Repositories\Interfaces\AbsensiPegawaiRepositoryInterface;
@@ -50,6 +51,7 @@ use App\Repositories\Interfaces\GrupVehiclePegawaiRepositoryInterface;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use App\Repositories\Interfaces\UserRoleRepositoryInterface;
 use App\Repositories\Implementations\UserRoleRepository;
+use App\Repositories\Interfaces\DinasKeluarPegawaiRepositoryInterface;
 use App\Repositories\Interfaces\LemburPegawaiRepositoryInterface;
 use App\Repositories\Interfaces\PermohonanAbsensiRepositoryInterface;
 use App\Repositories\Interfaces\UserPengunjungRepositoryInterface;
@@ -62,6 +64,7 @@ class AppServiceProvider extends ServiceProvider
    * @return void
    */
   public function register()
+
 
 
 
@@ -91,5 +94,6 @@ class AppServiceProvider extends ServiceProvider
     $this->app->bind(UserPengunjungRepositoryInterface::class, UserPengunjungRepository::class);
     $this->app->bind(LemburPegawaiRepositoryInterface::class, LemburPegawaiRepository::class);
     $this->app->bind(PermohonanAbsensiRepositoryInterface::class, PermohonanAbsensiRepository::class);
+    $this->app->bind(DinasKeluarPegawaiRepositoryInterface::class, DinasKeluarPegawaiRepository::class);
   }
 }
